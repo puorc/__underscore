@@ -32,3 +32,13 @@ function last(array, n = 1) {
         return Array.prototype.slice.call(array, array.length - n);
 }
 
+/**
+ * Returns the rest of the elements in an array. Pass an index to return the values of the array from that index onward.
+ * @param {*} array 
+ * @param {*} index 
+ */
+function rest(array, index = 1) {
+    if (isAvailable(array, n = 1))
+        return Array.prototype.slice.call(array, index);    
+}
+
