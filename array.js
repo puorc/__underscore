@@ -1,5 +1,5 @@
 function isAvailable(array) {
-    return Boolean(array);
+    return array.length !== undefined && array.length !== null;
 }
 
 /**
@@ -8,8 +8,11 @@ function isAvailable(array) {
  * @param {*} n 
  */
 function first(array, n = 1) {
-    if (isAvailable(array)) 
-        return Array.prototype.slice.call(array, 0, n);
+    if (isAvailable(array))
+        if (n === 1)
+            return array[0];
+        else
+            return Array.prototype.slice.call(array, 0, n);
 }
 
 /**
@@ -18,7 +21,7 @@ function first(array, n = 1) {
  * @param {*} n 
  */
 function initial(array, n = 1) {
-    if (isAvailable(array)) 
+    if (isAvailable(array))
         return Array.prototype.slice.call(array, 0, array.length - n);
 }
 
@@ -29,7 +32,10 @@ function initial(array, n = 1) {
  */
 function last(array, n = 1) {
     if (isAvailable(array))
-        return Array.prototype.slice.call(array, array.length - n);
+        if (n === 1)
+            return array[array.length - 1];
+        else
+            return Array.prototype.slice.call(array, array.length - n);
 }
 
 /**
@@ -39,6 +45,30 @@ function last(array, n = 1) {
  */
 function rest(array, index = 1) {
     if (isAvailable(array, n = 1))
-        return Array.prototype.slice.call(array, index);    
+        return Array.prototype.slice.call(array, index);
 }
 
+function compact(array) {
+   if (isAvailable(array)) {
+       return Array.prototype.filter.call(array, function (element) {
+           return Boolean(element);
+       });
+   } 
+}
+/**
+ * Flattens a nested array (the nesting can be to any depth). If you pass shallow, the array will only be flattened a single level.
+ * @param {*} array 
+ * @param {*} shallow 
+ */
+function flatten(array, shallow) {
+   if (isAvailable(array)) {
+              
+   } 
+} 
+module.exports = {
+    first,
+    initial,
+    last,
+    rest,
+    compact
+};
