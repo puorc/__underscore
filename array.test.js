@@ -68,6 +68,48 @@ test("compact-normal", () => {
     expect(array.compact([5, 6, '', false, null, undefined, 0, NaN])).toEqual([5, 6]);
 })
 
-test ("compact-abnormal", () => {
+test("compact-abnormal", () => {
     expect(array.compact(8)).toBeUndefined();
+})
+
+test("flatten-normal", () => {
+    expect(array.flatten([1, [2],
+        [3, [4]]
+    ])).toEqual([1, 2, 3, 4])
+})
+
+test("without-normal", () => {
+    expect(array.without([1, 2, 1, 0, 3, 1, 4], 0, 1)).toEqual([2, 3, 4])
+})
+
+test("without-abnormal", () => {
+    expect(array.without([1, 2, 1, 0, 3, 1, 4])).toEqual([1, 2, 1, 0, 3, 1, 4]);
+})
+
+test("union-normal", () => {
+    expect(array.union([1, 2, 3], [101, 2, 1, 10], [2, 1])).toEqual([1, 2, 3, 101, 10]);
+})
+
+test("union-abnormal", () => {
+    expect(array.union([1, 2, 3])).toEqual([1, 2, 3]);
+})
+
+test("intersection-normal", () => {
+    expect(array.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1])).toEqual([1, 2]);
+})
+
+test("intersection-different", () => {
+    expect(array.intersection([1, 2, 3], [5, 6])).toEqual([]);
+})
+
+test("intersection-one", () => {
+    expect(array.intersection([1, 2, 3])).toEqual([1, 2, 3]);
+})
+
+test("difference-normal", () => {
+    expect(array.difference([1, 2, 3, 4, 5], [5, 2, 10])).toEqual([1, 3, 4]);
+})
+
+test("difference-abnormal", () => {
+    expect(array.difference([1, 2, 3, 4, 5])).toEqual([1, 2, 3, 4, 5]);
 })
