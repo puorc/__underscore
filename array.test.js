@@ -113,3 +113,39 @@ test("difference-normal", () => {
 test("difference-abnormal", () => {
     expect(array.difference([1, 2, 3, 4, 5])).toEqual([1, 2, 3, 4, 5]);
 })
+
+test("zip-normal", () => {
+    expect(array.zip(['moe', 'larry', 'curly'], [30, 40, 50], [true, false, false])).toEqual([
+        ["moe", 30, true],
+        ["larry", 40, false],
+        ["curly", 50, false]
+    ]);
+})
+
+test("zip-notEqualLen", () => {
+    expect(array.zip([5, 6], [8])).toBeNull();
+})
+
+test("zip-null", () => {
+    expect(array.zip()).toBeNull();
+})
+
+test("unzip-normal", () => {
+    expect(array.unzip([
+        ["moe", 30, true],
+        ["larry", 40, false],
+        ["curly", 50, false]
+    ])).toEqual([
+        ['moe', 'larry', 'curly'],
+        [30, 40, 50],
+        [true, false, false]
+    ]);
+})
+
+test("object-normal", () => {
+    expect(array.object(['moe', 'larry', 'curly'], [30, 40, 50])).toEqual({ moe: 30, larry: 40, curly: 50 });
+})
+
+test("object-abnormal", () => {
+    expect(array.object(5, 6)).toEqual({});
+})

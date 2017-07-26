@@ -138,6 +138,65 @@ function intersection(...arrays) {
 function difference(array, others = []) {
     return without(array, ...others);
 }
+
+/**
+ * Remain to be done, need some algorithms background to accomplish.
+ * uniq_.uniq(array, [isSorted], [iteratee]) Alias: unique 
+ * Produces a duplicate-free version of the array, using === to test object equality.
+ * In particular only the first occurence of each value is kept. If you know in advance that the array is sorted, 
+ * passing true for isSorted will run a much faster algorithm. If you want to compute unique items based on a transformation, 
+ * pass an iteratee function.
+ */
+
+
+/**
+ * Merges together the values of each of the arrays with the values at the corresponding position. 
+ * Useful when you have separate data sources that are coordinated through matching array indexes.
+ * @param {*} arrays 
+ */
+function zip(...arrays) {
+    var result = [];
+    if (arrays.length === 0) return null;
+    if (arrays.length === 1) return arrays[0];
+    if (!arrays.every(function(item) {
+            return item.length === arrays[0].length;
+        })) {
+        return null;
+    } else {
+        for (let i = 0; i < arrays[0].length; i++) {
+            let tmpArray = [];
+            for (let j = 0; j < arrays.length; j++) {
+                tmpArray.push(arrays[j][i]);
+            }
+            result.push(tmpArray);
+        }
+    }
+    return result;
+}
+
+/**
+ * The opposite of zip. Given an array of arrays, returns a series of new arrays, 
+ * the first of which contains all of the first elements in the input arrays, the second of which contains all of the second elements, and so on.
+ * @param {*} array 
+ */
+function unzip(arrays) {
+    return zip(...arrays);
+}
+/**
+ * Converts arrays into objects. 
+ * Pass either a single list of [key, value] pairs, or a list of keys, and a list of values. If duplicate keys exist, the last value wins.
+ * @param {*} list 
+ * @param {*} values 
+ */
+function object(list, values) {
+    var returnObject = {};
+    if (Array.isArray(list) && Array.isArray(values)) {
+        list.forEach(function(item, index) {
+            returnObject[item] = values[index];
+        });
+    }
+    return returnObject;
+}
 module.exports = {
     first,
     initial,
@@ -148,5 +207,8 @@ module.exports = {
     without,
     union,
     intersection,
-    difference
+    difference,
+    zip,
+    unzip,
+    object
 };
