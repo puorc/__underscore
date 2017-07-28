@@ -149,3 +149,23 @@ test("object-normal", () => {
 test("object-abnormal", () => {
     expect(array.object(5, 6)).toEqual({});
 })
+
+test("range-one-para", () => {
+    expect(array.range(10)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+})
+
+test("range-two-paras", () => {
+    expect(array.range(1, 11)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+})
+
+test("range-three-paras", () => {
+    expect(array.range(0, 30, 5)).toEqual([0, 5, 10, 15, 20, 25]);
+})
+
+test("range-nega-paras", () => {
+    expect(array.range(0, -10, -1)).toEqual([0, -1, -2, -3, -4, -5, -6, -7, -8, -9]);
+})
+
+test("range-zero", () => {
+    expect(array.range(0)).toEqual([]);
+})

@@ -197,6 +197,43 @@ function object(list, values) {
     }
     return returnObject;
 }
+
+
+/**
+ * A function to create flexibly-numbered lists of integers, handy for each and map loops. start, if omitted, defaults to 0; step defaults to 1. 
+ * Returns a list of integers from start (inclusive) to stop (exclusive), incremented (or decremented) by step, exclusive. Note that ranges 
+ * that stop before they start are considered to be zero-length instead of negative — if you'd like a negative range, use a negative step. 
+ * @param {*} start 
+ * @param {*} stop 
+ * @param {*} step 
+ */
+function range() {
+    var resultArray = [],
+        start = 0,
+        step = 1,
+        stop = 0;
+    switch (arguments.length) {
+        case 1:
+            stop = arguments[0];
+            break;
+        case 2:
+            start = arguments[0];
+            stop = arguments[1];
+            break;
+        case 3:
+            start = arguments[0];
+            stop = arguments[1];
+            step = arguments[2];
+            break;
+        default:
+            return;
+            break;
+    }
+    for (let i = start; Math.abs(i) < Math.abs(stop); i += step) {
+        resultArray.push(i);
+    }
+    return resultArray;
+}
 module.exports = {
     first,
     initial,
@@ -210,5 +247,6 @@ module.exports = {
     difference,
     zip,
     unzip,
-    object
+    object,
+    range
 };

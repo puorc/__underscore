@@ -1,3 +1,3 @@
 const array = require("./array.js");
 
-array.intersection([1, 2, 3]);
+array.range(0, 5, 1);
