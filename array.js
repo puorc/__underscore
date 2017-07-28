@@ -229,6 +229,7 @@ function range() {
             return;
             break;
     }
+    // abs function deals with the negative condition, to make sure the loop can run correctly.
     for (let i = start; Math.abs(i) < Math.abs(stop); i += step) {
         resultArray.push(i);
     }
