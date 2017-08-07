@@ -1,3 +1,3 @@
-const array = require("./array.js");
+const objects = require("./objects.js");
 
-array.range(0, 5, 1);
+objects.pairs({ one: 1, two: 2, three: 3 });

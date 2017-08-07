@@ -13,10 +13,10 @@ function keys(object) {
 function allKeys(object) {
     var result = [],
         theObject = object;
-    result.push(Object.keys(object));
-    while (theObject.prototype !== undefined) {
-        result.push(...Object.keys(theObject.prototype));
-        theObject = theObject.prototype;
+    result.push(...Object.keys(object));
+    while (Object.getPrototypeOf(theObject) !== null) {
+        result.push(...Object.keys(Object.getPrototypeOf(theObject)));
+        theObject = Object.getPrototypeOf(theObject);
     }
     return result;
 }
@@ -29,7 +29,7 @@ function values(object) {
     var result = [];
     for (let key in object)
         result.push(object[key]);
-    return object;
+    return result;
 }
 
 /**
@@ -39,7 +39,9 @@ function values(object) {
 function pairs(object) {
     var result = [];
     for (let key in object) {
-        result.push([].push(key, object[key]));
+        let tmpArray = [];
+        tmpArray.push(key, object[key]);
+        result.push(tmpArray);
     }
     return result;
 }
@@ -80,12 +82,97 @@ function functions(object) {
  * @param {*} sources 
  */
 function extend(destination, ...sources) {
-    sources.array.forEach(function(element) {
+    sources.forEach(function(element) {
         for (let key in element) {
             destination[key] = element[key];
         }
     });
     return destination;
+}
+
+/**
+ * Return a copy of the object, filtered to only have values for the whitelisted keys (or array of valid keys). 
+ * Alternatively accepts a predicate indicating which keys to pick.
+ * @param {*} object 
+ * @param {*} keys 
+ */
+function pick(object, ...keys) {
+    var returnObject = {};
+    for (let i = 0; i < keys.length; i++) {
+        if (typeof keys[i] === "string") {
+            for (let key in object)
+                if (key === keys[i])
+                    returnObject[key] = object[key];
+        }
+        if (typeof keys[i] === "function") {
+            for (let key in object) {
+                if (keys[i](object[key], key, object))
+                    returnObject[key] = object[key];
+            }
+        }
+    }
+    return returnObject;
+}
+
+/**
+ * Return a copy of the object, filtered to omit the blacklisted keys (or array of keys). 
+ * Alternatively accepts a predicate indicating which keys to omit.
+ * @param {*} object 
+ * @param {*} keys 
+ */
+function omit(object, ...keys) {
+    var returnObject = {};
+    for (let i = 0; i < keys.length; i++) {
+        if (typeof keys[i] === "string") {
+            for (let key in object)
+                if (key !== keys[i])
+                    returnObject[key] = object[key];
+        }
+        if (typeof keys[i] === "function") {
+            for (let key in object) {
+                if (!keys[i](object[key], key, object))
+                    returnObject[key] = object[key];
+            }
+        }
+    }
+    return returnObject;
+}
+
+/**
+ * Fill in undefined properties in object with the first value present in the following list of defaults objects.
+ * @param {*} object 
+ * @param {*} defaults 
+ */
+function defaults(object, ...defaults) {
+    defaults.forEach(function(item) {
+        if (typeof item === "object") {
+            for (let key in item) {
+                if (object[key] === undefined)
+                    object[key] = item[key];
+            }
+        }
+    });
+    return object;
+}
+
+function clone(object) {
+    var returnObject = {};
+    for (let key in object) {
+        returnObject[key] = object[key];
+    }
+    return returnObject;
+}
+
+// tap(object, interceptor)  remains to be done
+
+/**
+ * Returns a function that will itself return the key property of any passed-in object.
+ * @param {*} key 
+ */
+function property(key) {
+    return function(that) {
+        return that[key];
+    }
 }
 module.exports = {
     keys,
@@ -94,5 +181,10 @@ module.exports = {
     pairs,
     invert,
     functions,
-    extend
+    extend,
+    pick,
+    omit,
+    defaults,
+    clone,
+    property
 }
