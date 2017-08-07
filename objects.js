@@ -4,7 +4,7 @@
  */
 function keys(object) {
     return Object.keys(object);
-} 
+}
 
 /**
  * Retrieve all the names of object's own and inherited properties.
@@ -12,13 +12,13 @@ function keys(object) {
  */
 function allKeys(object) {
     var result = [],
-     theObject = object;
+        theObject = object;
     result.push(Object.keys(object));
     while (theObject.prototype !== undefined) {
-        result.push(theObject.prototype);
-        theObject = theObject.prototype; 
+        result.push(...Object.keys(theObject.prototype));
+        theObject = theObject.prototype;
     }
-    return theObject;
+    return result;
 }
 
 /**
@@ -64,13 +64,35 @@ function invert(object) {
  */
 function functions(object) {
     var returnArray = [];
-    for(let key in object) {
+    for (let key in object) {
         if (typeof object[key] === "function") {
             returnArray.push(key);
         }
     }
     return returnArray;
 }
+
+/**
+ * Shallowly copy all of the properties in the source objects over to the destination object, and return the destination object. 
+ * Any nested objects or arrays will be copied by reference, not duplicated. 
+ * It's in-order, so the last source will override properties of the same name in previous arguments.
+ * @param {*} destination 
+ * @param {*} sources 
+ */
+function extend(destination, ...sources) {
+    sources.array.forEach(function(element) {
+        for (let key in element) {
+            destination[key] = element[key];
+        }
+    });
+    return destination;
+}
 module.exports = {
-    keys
+    keys,
+    allKeys,
+    values,
+    pairs,
+    invert,
+    functions,
+    extend
 }
