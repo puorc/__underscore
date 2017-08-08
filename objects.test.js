@@ -221,4 +221,22 @@ test("object-isNaN-false", () => {
     expect(objects.isNaN(undefined)).toBeFalsy();
 })
 
+test("object-isNull-true", () => {
+    expect(objects.isNull(null)).toBeTruthy();
+})
 
+test("object-isNull-false", () => {
+    expect(objects.isNull(undefined)).toBeFalsy();
+})
+
+test("object-isUndefined", () => {
+    expect(objects.isUndefine(window.missingVariable)).toBeTruthy();
+})
+
+test("object-isFinite-true", () => {
+    expect(objects.isFinite(-101)).toBeTruthy();
+})
+
+test("object-isFinite-false", () => {
+    expect(objects.isFinite(-Infinity)).toBeFalsy();
+})

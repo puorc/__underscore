@@ -299,6 +299,30 @@ function isError(object) {
 function isNaN(object) {
     return object !== object;
 }
+
+/**
+ * Returns true if the value of object is null.
+ * @param {*} object 
+ */
+function isNull(object) {
+    return object === null;
+}
+
+/**
+ * Returns true if value is undefined.
+ * @param {*} value 
+ */
+function isUndefine(value) {
+    return arguments.length === 1 && value === undefined;
+}
+
+/**
+ * Returns true if object is a finite Number.
+ * @param {*} object 
+ */
+function isFinite(object) {
+    return isNumber(object) && object !== Infinity && object !== -Infinity;
+}
 module.exports = {
     keys,
     allKeys,
@@ -324,5 +348,8 @@ module.exports = {
     isDate,
     isRegExp,
     isError,
-    isNaN
+    isNaN,
+    isNull,
+    isUndefine,
+    isFinite
 }
