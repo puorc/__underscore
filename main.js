@@ -1,3 +1,5 @@
-const objects = require("./objects.js");
+const functions = require("./functions.js");
 
-objects.pairs({ one: 1, two: 2, three: 3 });
+var subtract = function(a, b) { return b - a; };
+sub5 = functions.partial(subtract, 5);
+sub5(20);
