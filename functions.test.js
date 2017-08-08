@@ -11,3 +11,10 @@ test("func-partial", () => {
     sub5 = functions.partial(subtract, 5);
     expect(sub5(20)).toBe(15);
 })
+
+test("func-compose", () => {
+    var greet    = function(name){ return "hi: " + name; };
+    var exclaim  = function(statement){ return statement.toUpperCase() + "!"; };
+    var welcome = functions.compose(greet, exclaim);
+    expect(welcome('moe')).toBe('hi: MOE!');
+})

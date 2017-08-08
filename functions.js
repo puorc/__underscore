@@ -50,8 +50,7 @@ function once(func) {
         if (!newFunc.isCalled) {
             newFunc.isCalled = true;
             newFunc.value = func();
-        }
-        else {
+        } else {
             return newFunc.value;
         }
     }
@@ -67,16 +66,56 @@ function after(count, func) {
     return function newFunc() {
         if (!newFunc.calledTimes) {
             newFunc.calledTimes = 1;
-        }
-        else if (calledTimes < count) {}
-        else {
+        } else if (calledTimes < count) {} else {
             return func();
         }
     }
 }
+
+/**
+ * Creates a version of the function that can be called no more than count times. 
+ * The result of the last function call is memoized and returned when count has been reached.
+ * @param {*} count 
+ * @param {*} func 
+ */
+function before(count, func) {
+    return function newFunc() {
+        if (!newFunc.calledTimes) {
+            newFunc.calledTimes = 1;
+            return func();
+        } else if (newFunc.calledTimes < count) {
+            var result = func();
+            if (newFunc.calledTimes = count - 1)
+                newFunc.value = result;
+            return result;
+        } else {}
+    }
+}
+
+/**
+ * Returns a new negated version of the predicate function.
+ * @param {*} predicate 
+ */
+function negate(predicate) {
+    return function () {
+        return !predicate();
+    }
+}
+
+function compose(...funcs) {
+    return function () {
+        var tmp = funcs[0]();
+        for (let i = 1; i < funcs.length; i++) {
+            tmp = funcs[i](tmp);
+        }
+        return tmp;
+    }
+}
+
 module.exports = {
     bind,
     partial,
     delay,
-    defer
+    defer,
+    compose
 }
