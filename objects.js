@@ -82,7 +82,7 @@ function functions(object) {
  * @param {*} sources 
  */
 function extend(destination, ...sources) {
-    sources.forEach(function(element) {
+    sources.forEach(function (element) {
         for (let key in element) {
             destination[key] = element[key];
         }
@@ -144,7 +144,7 @@ function omit(object, ...keys) {
  * @param {*} defaults 
  */
 function defaults(object, ...defaults) {
-    defaults.forEach(function(item) {
+    defaults.forEach(function (item) {
         if (typeof item === "object") {
             for (let key in item) {
                 if (object[key] === undefined)
@@ -170,9 +170,134 @@ function clone(object) {
  * @param {*} key 
  */
 function property(key) {
-    return function(that) {
+    return function (that) {
         return that[key];
     }
+}
+
+/**
+ * Performs an optimized deep comparison between the two objects, 
+ * to determine if they should be considered equal.
+ * @param {*} object 
+ * @param {*} other 
+ */
+function isEqual(object, other) {
+    for (let key in object) {
+        if (object[key] !== null && typeof object[key] === "object") {
+            return isEqual(object[key], other[key]);
+        } else {
+            if (object[key] !== other[key])
+                return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Tells you if the keys and values in properties are contained in object.
+ * @param {*} object 
+ * @param {*} properties 
+ */
+function isMatch(object, properties) {
+    for (let key in properties) {
+        if (!isEqual(object[key], properties[key]))
+            return false;
+    }
+    return true;
+}
+
+/**
+ * Returns true if an enumerable object contains no values (no enumerable own-properties). 
+ * For strings and array-like objects _.isEmpty checks if the length property is 0.
+ * @param {*} object 
+ */
+function isEmpty(object) {
+    if (object.length !== undefined)
+        return object.length === 0;
+    else
+        return Object.keys(object).length === 0;
+}
+
+/**
+ * Returns true if object is an Array.
+ * @param {*} object 
+ */
+function isArray(object) {
+    return object instanceof Array;
+}
+
+/**
+ * Returns true if object is a Function.
+ * @param {*} object 
+ */
+function isFunction(object) {
+    return typeof object === "function";
+}
+
+/**
+ * Returns true if value is an Object. 
+ * Note that JavaScript arrays and functions are objects, 
+ * while (normal) strings and numbers are not.
+ * @param {*} value 
+ */
+function isObject(value) {
+    return typeof value === "object" && !isArray(value) && !isFunction(value);
+}
+
+/**
+ * Returns true if object is a String.
+ * @param {*} object 
+ */
+function isString(object) {
+    return typeof object === "string";
+}
+
+/**
+ * Returns true if object is a Number (including NaN).
+ * @param {*} object 
+ */
+function isNumber(object) {
+    return typeof object === "number";
+}
+
+/**
+ * Returns true if object is either true or false.
+ * @param {*} object 
+ */
+function isBoolean(object) {
+    return typeof object === "boolean";
+}
+
+/**
+ * Returns true if object is a Date.
+ * @param {*} object 
+ */
+function isDate(object) {
+    return Object.prototype.toString.call(object) === "[object Date]";
+}
+
+/**
+ * Returns true if object is a RegExp.
+ * @param {*} object 
+ */
+function isRegExp(object) {
+    return Object.prototype.toString.call(object) === "[object RegExp]";
+}
+
+/**
+ * Returns true if object inherits from an Error.
+ * @param {*} object 
+ */
+function isError(object) {
+    return Object.prototype.toString.call(object) === "[object Error]";
+}
+
+/**
+ * Returns true if object is NaN.
+ * @param {*} object 
+ */
+function isNaN(object) {
+    return object !== object;
 }
 module.exports = {
     keys,
@@ -186,5 +311,18 @@ module.exports = {
     omit,
     defaults,
     clone,
-    property
+    property,
+    isEqual,
+    isMatch,
+    isEmpty,
+    isArray,
+    isFunction,
+    isObject,
+    isString,
+    isNumber,
+    isBoolean,
+    isDate,
+    isRegExp,
+    isError,
+    isNaN
 }
