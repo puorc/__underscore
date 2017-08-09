@@ -13,6 +13,14 @@ function determineType(list) {
         return TYPE.others;
 }
 
+/**
+ * Iterates over a list of elements, yielding each in turn to an iteratee function. The iteratee is bound to the context object, if one is passed.
+ * Each invocation of iteratee is called with three arguments: (element, index, list). If list is a JavaScript object, iteratee's arguments will be (value, key, list). 
+ * Returns the list for chaining.
+ * @param {*} list 
+ * @param {*} iteratee 
+ * @param {*} context 
+ */
 function each(list, iteratee, context) {
     var bindedIteratee = iteratee;
     if (context !== undefined) {
@@ -35,6 +43,13 @@ function each(list, iteratee, context) {
     }
 }
 
+/**
+ * Produces a new array of values by mapping each value in list through a transformation function (iteratee). 
+ * The iteratee is passed three arguments: the value, then the index (or key) of the iteration, and finally a reference to the entire list.
+ * @param {*} list 
+ * @param {*} iteratee 
+ * @param {*} context 
+ */
 function map(list, iteratee, context) {
     var bindedIteratee = iteratee,
         returnArray = [];
@@ -49,7 +64,7 @@ function map(list, iteratee, context) {
             break;
         case TYPE.object:
             for (let key in list) {
-                returnArray.push(bindedIteratee(list[i]));
+                returnArray.push(bindedIteratee(list[key]));
             }
             break;
         case TYPE.others:
@@ -59,6 +74,21 @@ function map(list, iteratee, context) {
     return returnArray;
 }
 
-function gh(params) {
+/**
+ * Also known as inject and foldl, reduce boils down a list of values into a single value. 
+ * Memo is the initial state of the reduction, and each successive step of it should be returned by iteratee. 
+ * The iteratee is passed four arguments: the memo, then the value and index (or key) of the iteration, and finally a reference to the entire list.
+ * If no memo is passed to the initial invocation of reduce, the iteratee is not invoked on the first element of the list. 
+ * The first element is instead passed as the memo in the invocation of the iteratee on the next element in the list.
+ * @param {*} list 
+ * @param {*} iteratee 
+ * @param {*} memo 
+ * @param {*} context 
+ */
+function reduce(list, iteratee, memo, context) {
 
+}
+module.exports = {
+    each,
+    map
 }

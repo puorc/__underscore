@@ -1,5 +1,3 @@
-const functions = require("./functions.js");
+const collections = require("./collections.js");
 
-var subtract = function(a, b) { return b - a; };
-sub5 = functions.partial(subtract, 5);
-sub5(20);
+collections.each([1, 2, 3], console.log);

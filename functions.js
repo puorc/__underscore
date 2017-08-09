@@ -6,7 +6,7 @@
  * @param {*} args 
  */
 function bind(func, object, ...args) {
-    return function () {
+    return function() {
         return func.apply(object, args);
     }
 }
@@ -97,14 +97,14 @@ function before(count, func) {
  * @param {*} predicate 
  */
 function negate(predicate) {
-    return function () {
+    return function() {
         return !predicate();
     }
 }
 
 function compose(...funcs) {
-    return function () {
-        var tmp = funcs[0]();
+    return function(value) {
+        var tmp = funcs[0](value);
         for (let i = 1; i < funcs.length; i++) {
             tmp = funcs[i](tmp);
         }
