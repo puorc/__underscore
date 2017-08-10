@@ -59,12 +59,12 @@ function map(list, iteratee, context) {
     switch (determineType(list)) {
         case TYPE.array_like:
             for (let i = 0; i < list.length; i++) {
-                returnArray.push(bindedIteratee(list[i]));
+                returnArray.push(bindedIteratee(list[i], i, list));
             }
             break;
         case TYPE.object:
             for (let key in list) {
-                returnArray.push(bindedIteratee(list[key]));
+                returnArray.push(bindedIteratee(list[key], key, list));
             }
             break;
         case TYPE.others:
@@ -86,9 +86,136 @@ function map(list, iteratee, context) {
  * @param {*} context 
  */
 function reduce(list, iteratee, memo, context) {
+    var bindedIteratee = iteratee, result, theMemo = memo;
+    if (context !== undefined) {
+        bindedIteratee = iteratee.bind(context);
+    }
+    for (let i = 0; i < list.length; i++) {
+        if (theMemo !== undefined) {
 
+        }
+    }
 }
+
+/**
+ * Looks through each value in the list, returning an array of all the values that pass a truth test (predicate).
+ * @param {*} list 
+ * @param {*} predicate 
+ * @param {*} context 
+ */
+function filter(list, predicate, context) {
+    var bindedIteratee = predicate, result = [];
+    if (context !== undefined) {
+        bindedIteratee = predicate.bind(context);
+    }
+    switch (determineType(list)) {
+        case TYPE.array_like:
+            for (let i = 0; i < list.length; i++) {
+                if (predicate(list[i])) {
+                    result.push(list[i]);
+                } 
+            }
+            break;
+        case TYPE.object:
+            for (let key in list) {
+                if (predicate(list[key])) {
+                    result.push(list[key]);
+                }
+            }
+            break;
+        case TYPE.others:
+        default:
+            return;
+    }
+    return result;
+}
+
+/**
+ * Returns true if all of the values in the list pass the predicate truth test.
+ *  Short-circuits and stops traversing the list if a false element is found.
+ * @param {*} list 
+ * @param {*} predicate 
+ * @param {*} context 
+ */
+function every(list, predicate, context) {
+    var bindedIteratee = predicate;
+    if (context !== undefined) {
+        bindedIteratee = predicate.bind(context);
+    }
+    switch (determineType(list)) {
+        case TYPE.array_like:
+            for (let i = 0; i < list.length; i++) {
+                if (!predicate(list[i]))
+                    return false;
+            }
+            break;
+        case TYPE.object:
+            for (let key in list) {
+                if (!predicate(list[key])) {
+                    return false;
+                }
+            }
+            break;
+        case TYPE.others:
+        default:
+            break;
+    }
+    return true;
+}
+
+/**
+ * Returns true if any of the values in the list pass the predicate truth test. 
+ * Short-circuits and stops traversing the list if a true element is found.
+ * @param {*} list 
+ * @param {*} predicate 
+ * @param {*} context 
+ */
+function some(list, predicate, context) {
+    var bindedIteratee = predicate;
+    if (context !== undefined) {
+        bindedIteratee = predicate.bind(context);
+    }
+    if (predicate === undefined) {
+        predicate = Boolean;
+    }
+    switch (determineType(list)) {
+        case TYPE.array_like:
+            for (let i = 0; i < list.length; i++) {
+                if (predicate(list[i]))
+                    return true;
+            }
+            break;
+        case TYPE.object:
+            for (let key in list) {
+                if (predicate(list[key])) {
+                    return true;
+                }
+            }
+            break;
+        case TYPE.others:
+        default:
+            break;
+    }
+    return false;
+}
+
+/**
+ * A convenient version of what is perhaps the most common use-case for map: extracting a list of property values.
+ * @param {*} list 
+ * @param {*} propertyName 
+ */
+function pluck(list, propertyName) {
+    return map(list, function (item, key) {
+        if (key === propertyName) {
+            return item;
+        }
+    });
+} 
 module.exports = {
     each,
-    map
+    map,
+    filter,
+    every,
+    some,
+    pluck
 }
