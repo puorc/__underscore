@@ -1,3 +1,4 @@
+const utility = require("./utility.js");
 const TYPE = {
     array_like: Symbol("array_like"),
     object: Symbol("object"),
@@ -86,7 +87,8 @@ function map(list, iteratee, context) {
  * @param {*} context 
  */
 function reduce(list, iteratee, memo, context) {
-    var bindedIteratee = iteratee, result, theMemo = memo;
+    var bindedIteratee = iteratee,
+        result, theMemo = memo;
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
@@ -104,7 +106,8 @@ function reduce(list, iteratee, memo, context) {
  * @param {*} context 
  */
 function filter(list, predicate, context) {
-    var bindedIteratee = predicate, result = [];
+    var bindedIteratee = predicate,
+        result = [];
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
@@ -113,7 +116,7 @@ function filter(list, predicate, context) {
             for (let i = 0; i < list.length; i++) {
                 if (predicate(list[i])) {
                     result.push(list[i]);
-                } 
+                }
             }
             break;
         case TYPE.object:
@@ -205,17 +208,122 @@ function some(list, predicate, context) {
  * @param {*} propertyName 
  */
 function pluck(list, propertyName) {
-    return map(list, function (item, key) {
-        if (key === propertyName) {
-            return item;
+    return map(list, function (item) {
+        if (propertyName in item) {
+            return item[propertyName];
         }
     });
-} 
+}
+/**
+ * Returns the maximum value in list. If an iteratee function is provided, 
+ * it will be used on each value to generate the criterion by which the value is ranked.
+ * @param {*} list 
+ * @param {*} iteratee 
+ * @param {*} context 
+ */
+function max(list, iteratee, context) {
+    var bindedIteratee = iteratee,
+        max, maxObj;
+    if (context !== undefined) {
+        bindedIteratee = iteratee.bind(context);
+    }
+    switch (determineType(list)) {
+        case TYPE.array_like:
+            let isFirstTime = true;
+            for (let i = 0; i < list.length; i++) {
+                if (typeof bindedIteratee(list[i], i, list) === "number") {
+                    if (isFirstTime) {
+                        max = bindedIteratee(list[i], i, list);
+                        maxObj = list[i];
+                        isFirstTime = false;
+                    }
+                    if (bindedIteratee(list[i], i, list) > max) {
+                        max = bindedIteratee(list[i], i, list);
+                        maxObj = list[i];
+                    }
+                }
+            }
+            break;
+        default:
+            return;
+    }
+    return maxObj;
+}
+
+/**
+ * Produce a random sample from the list. Pass a number to return n random elements from the list. 
+ * Otherwise a single random item will be returned.
+ * @param {*} list 
+ * @param {*} n 
+ */
+// has been tested manually
+function sample(list, n) {
+    if (determineType(list) === TYPE.array_like) {
+        if (n === undefined) {
+            return list[utility.random(list.length - 1)];
+        } else {
+            let result = [];
+            for (let i = 0; i < n; i++) {
+                result.push(utility.random(list.length - 1));
+            }
+            return result;
+        }
+    }
+}
+
+/**
+ * Creates a real Array from the list (anything that can be iterated over). 
+ * Useful for transmuting the arguments object.
+ * @param {*} list 
+ */
+function toArray(list) {
+    return Array.prototype.slice.call(list);
+}
+
+/**
+ * Return the number of values in the list.
+ * @param {*} list 
+ */
+function size(list) {
+    switch (determineType(list)) {
+        case TYPE.array_like:
+            return list.length;
+            break;
+        case TYPE.object:
+            return Object.keys(list).length;
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+ * Split array into two arrays: one whose elements all satisfy predicate and one whose elements all do not satisfy predicate.
+ * @param {*} array 
+ * @param {*} predicate 
+ */
+function partition(array, predicate) {
+    if (!array instanceof Array) return;
+    var rightResult = [],
+    otherResult = [];
+    result = [];
+    for (let i = 0; i < array.length; i++) {
+        predicate(array[i]) ? rightResult.push(array[i]) : otherResult.push(array[i]);
+    }
+    result.push(rightResult);
+    result.push(otherResult);
+    return result;
+}
 module.exports = {
     each,
     map,
     filter,
     every,
     some,
-    pluck
+    pluck,
+    max,
+    sample,
+    toArray,
+    size,
+    partition
 }
