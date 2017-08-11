@@ -1,4 +1,4 @@
-const collections = require("./collections.js");
+const collections = require("../src/collections.js");
 
 // function each has been tested.
 

@@ -44,7 +44,7 @@ function last(array, n = 1) {
  * @param {*} index 
  */
 function rest(array, index = 1) {
-    if (isAvailable(array, n = 1))
+    if (isAvailable(array))
         return Array.prototype.slice.call(array, index);
 }
 

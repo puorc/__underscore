@@ -1,8 +1,42 @@
 {
+    "name": "__underscore",
+    "description": "Just practise node.js and js script",
+    "homepage": "https://github.com/puorc/__underscore",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "Pu Zhao",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/puorc/__underscore"
+    },
+    "license": "MIT",
     "scripts": {
-        "test": "jest"
+        "test": "jest",
+        "lint": "eslint src/*.js test/*.js",
+        "compile": "babel src --out-file __underscore.js",
+        "minify": "uglifyjs __underscore.js -c -m -o __underscore.min.js --source-map"
     },
     "dependencies": {
-        "jest": "^20.0.4"
+        "jest": "^20.0.4",
+        "uglify-js": "^3.0.27"
+    },
+    "jest": {
+        "verbose": true,
+        "collectCoverage": true
+    },
+    "devDependencies": {
+        "babel-cli": "^6.24.1",
+        "babel-preset-env": "^1.6.0",
+        "eslint-config-standard": "^10.2.1",
+        "eslint-plugin-import": "^2.7.0",
+        "eslint-plugin-node": "^5.1.1",
+        "eslint-plugin-promise": "^3.5.0",
+        "eslint-plugin-standard": "^3.0.1"
     }
 }

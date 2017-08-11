@@ -305,7 +305,7 @@ function size(list) {
 function partition(array, predicate) {
     if (!array instanceof Array) return;
     var rightResult = [],
-    otherResult = [];
+    otherResult = [],
     result = [];
     for (let i = 0; i < array.length; i++) {
         predicate(array[i]) ? rightResult.push(array[i]) : otherResult.push(array[i]);

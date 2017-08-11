@@ -1,4 +1,4 @@
-const functions = require("./functions.js");
+const functions = require("../src/functions.js");
 
 test("func-bind", () => {
     var func = function(greeting) { return greeting + ': ' + this.name };

@@ -1,4 +1,4 @@
-const utility = require("./utility.js");
+const utility = require("../src/utility.js");
 
 test("utility-constant", () => {
     var stooge = {name: 'moe'};

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>utility.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="array.html">
+                  array.js
+                </a>
+              
+                
+                <a class="source" href="collections.html">
+                  collections.js
+                </a>
+              
+                
+                <a class="source" href="functions.html">
+                  functions.js
+                </a>
+              
+                
+                <a class="source" href="objects.html">
+                  objects.js
+                </a>
+              
+                
+                <a class="source" href="utility.html">
+                  utility.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>utility.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * Creates a function that returns the same value that is used as the argument of _.constant.
+ * @param {*} value 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">constant</span>(<span class="hljs-params">value</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> value;
+    }
+}
+
+<span class="hljs-comment">/**
+ * Returns a random integer between min and max, inclusive. 
+ * If you only pass one argument, it will return a number between 0 and that number.
+ * @param {*} min 
+ * @param {*} max 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">random</span>(<span class="hljs-params">min, max</span>) </span>{
+    <span class="hljs-keyword">var</span> theMin, theMax, difference;
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length === <span class="hljs-number">2</span>) {
+        theMin = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>];
+        theMax = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">arguments</span>.length === <span class="hljs-number">1</span>) {
+        theMin = <span class="hljs-number">0</span>;
+        theMax = <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>];
+    } <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">return</span>;
+    difference = theMax - theMin;
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.ceil(<span class="hljs-built_in">Math</span>.random() * difference + theMin);
+}
+
+<span class="hljs-comment">/**
+ * If the value of the named property is a function then invoke it with the object as context; otherwise, return it. 
+ * If a default value is provided and the property doesn't exist or is undefined then the default will be returned. 
+ * If defaultValue is a function its result will be returned.
+ * @param {*} object 
+ * @param {*} property 
+ * @param {*} defaultValue 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">result</span>(<span class="hljs-params">object, property, defaultValue</span>) </span>{
+    <span class="hljs-keyword">if</span> (object[property] === <span class="hljs-literal">undefined</span>) {
+        <span class="hljs-keyword">if</span> (defaultValue !== <span class="hljs-literal">undefined</span>) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> defaultValue === <span class="hljs-string">"function"</span>) {
+                <span class="hljs-keyword">return</span> defaultValue(object);
+            } <span class="hljs-keyword">else</span>
+                <span class="hljs-keyword">return</span> defaultValue;
+        }
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> object[property] === <span class="hljs-string">"function"</span>)
+            <span class="hljs-keyword">return</span> object[property](object);
+        <span class="hljs-keyword">else</span>
+            <span class="hljs-keyword">return</span> object[property];
+    }
+}
+<span class="hljs-built_in">module</span>.exports = {
+    constant,
+    random,
+    result
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

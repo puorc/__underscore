@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>objects.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="array.html">
+                  array.js
+                </a>
+              
+                
+                <a class="source" href="collections.html">
+                  collections.js
+                </a>
+              
+                
+                <a class="source" href="functions.html">
+                  functions.js
+                </a>
+              
+                
+                <a class="source" href="objects.html">
+                  objects.js
+                </a>
+              
+                
+                <a class="source" href="utility.html">
+                  utility.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>objects.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * Retrieve all the names of the object's own enumerable properties.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">keys</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(object);
+}
+
+<span class="hljs-comment">/**
+ * Retrieve all the names of object's own and inherited properties.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">allKeys</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">var</span> result = [],
+        theObject = object;
+    result.push(...Object.keys(object));
+    <span class="hljs-keyword">while</span> (<span class="hljs-built_in">Object</span>.getPrototypeOf(theObject) !== <span class="hljs-literal">null</span>) {
+        result.push(...Object.keys(<span class="hljs-built_in">Object</span>.getPrototypeOf(theObject)));
+        theObject = <span class="hljs-built_in">Object</span>.getPrototypeOf(theObject);
+    }
+    <span class="hljs-keyword">return</span> result;
+}
+
+<span class="hljs-comment">/**
+ * Return all of the values of the object's own properties.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">values</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">var</span> result = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object)
+        result.push(object[key]);
+    <span class="hljs-keyword">return</span> result;
+}
+
+<span class="hljs-comment">/**
+ * Convert an object into a list of [key, value] pairs.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pairs</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">var</span> result = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+        <span class="hljs-keyword">let</span> tmpArray = [];
+        tmpArray.push(key, object[key]);
+        result.push(tmpArray);
+    }
+    <span class="hljs-keyword">return</span> result;
+}
+
+<span class="hljs-comment">/**
+ * Returns a copy of the object where the keys have become the values and the values the keys. 
+ * For this to work, all of your object's values should be unique and string serializable.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">invert</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">var</span> returnObject = {};
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+        returnObject[object[key]] = key;
+    }
+    <span class="hljs-keyword">return</span> returnObject;
+}
+
+<span class="hljs-comment">/**
+ * Returns a sorted list of the names of every method in an object — 
+ * that is to say, the name of every function property of the object.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">functions</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">var</span> returnArray = [];
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> object[key] === <span class="hljs-string">"function"</span>) {
+            returnArray.push(key);
+        }
+    }
+    <span class="hljs-keyword">return</span> returnArray;
+}
+
+<span class="hljs-comment">/**
+ * Shallowly copy all of the properties in the source objects over to the destination object, and return the destination object. 
+ * Any nested objects or arrays will be copied by reference, not duplicated. 
+ * It's in-order, so the last source will override properties of the same name in previous arguments.
+ * @param {*} destination 
+ * @param {*} sources 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extend</span>(<span class="hljs-params">destination, ...sources</span>) </span>{
+    sources.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">element</span>) </span>{
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> element) {
+            destination[key] = element[key];
+        }
+    });
+    <span class="hljs-keyword">return</span> destination;
+}
+
+<span class="hljs-comment">/**
+ * Return a copy of the object, filtered to only have values for the whitelisted keys (or array of valid keys). 
+ * Alternatively accepts a predicate indicating which keys to pick.
+ * @param {*} object 
+ * @param {*} keys 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pick</span>(<span class="hljs-params">object, ...keys</span>) </span>{
+    <span class="hljs-keyword">var</span> returnObject = {};
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; keys.length; i++) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> keys[i] === <span class="hljs-string">"string"</span>) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object)
+                <span class="hljs-keyword">if</span> (key === keys[i])
+                    returnObject[key] = object[key];
+        }
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> keys[i] === <span class="hljs-string">"function"</span>) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+                <span class="hljs-keyword">if</span> (keys[i](object[key], key, object))
+                    returnObject[key] = object[key];
+            }
+        }
+    }
+    <span class="hljs-keyword">return</span> returnObject;
+}
+
+<span class="hljs-comment">/**
+ * Return a copy of the object, filtered to omit the blacklisted keys (or array of keys). 
+ * Alternatively accepts a predicate indicating which keys to omit.
+ * @param {*} object 
+ * @param {*} keys 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">omit</span>(<span class="hljs-params">object, ...keys</span>) </span>{
+    <span class="hljs-keyword">var</span> returnObject = {};
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; keys.length; i++) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> keys[i] === <span class="hljs-string">"string"</span>) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object)
+                <span class="hljs-keyword">if</span> (key !== keys[i])
+                    returnObject[key] = object[key];
+        }
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> keys[i] === <span class="hljs-string">"function"</span>) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+                <span class="hljs-keyword">if</span> (!keys[i](object[key], key, object))
+                    returnObject[key] = object[key];
+            }
+        }
+    }
+    <span class="hljs-keyword">return</span> returnObject;
+}
+
+<span class="hljs-comment">/**
+ * Fill in undefined properties in object with the first value present in the following list of defaults objects.
+ * @param {*} object 
+ * @param {*} defaults 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">defaults</span>(<span class="hljs-params">object, ...defaults</span>) </span>{
+    defaults.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item</span>) </span>{
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> item === <span class="hljs-string">"object"</span>) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> item) {
+                <span class="hljs-keyword">if</span> (object[key] === <span class="hljs-literal">undefined</span>)
+                    object[key] = item[key];
+            }
+        }
+    });
+    <span class="hljs-keyword">return</span> object;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clone</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">var</span> returnObject = {};
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+        returnObject[key] = object[key];
+    }
+    <span class="hljs-keyword">return</span> returnObject;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>tap(object, interceptor)  remains to be done</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-comment">/**
+ * Returns a function that will itself return the key property of any passed-in object.
+ * @param {*} key 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">property</span>(<span class="hljs-params">key</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">that</span>) </span>{
+        <span class="hljs-keyword">return</span> that[key];
+    }
+}
+
+<span class="hljs-comment">/**
+ * Performs an optimized deep comparison between the two objects, 
+ * to determine if they should be considered equal.
+ * @param {*} object 
+ * @param {*} other 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isEqual</span>(<span class="hljs-params">object, other</span>) </span>{
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> object) {
+        <span class="hljs-keyword">if</span> (object[key] !== <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">typeof</span> object[key] === <span class="hljs-string">"object"</span>) {
+            <span class="hljs-keyword">return</span> isEqual(object[key], other[key]);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span> (object[key] !== other[key])
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+}
+
+<span class="hljs-comment">/**
+ * Tells you if the keys and values in properties are contained in object.
+ * @param {*} object 
+ * @param {*} properties 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isMatch</span>(<span class="hljs-params">object, properties</span>) </span>{
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> key <span class="hljs-keyword">in</span> properties) {
+        <span class="hljs-keyword">if</span> (!isEqual(object[key], properties[key]))
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if an enumerable object contains no values (no enumerable own-properties). 
+ * For strings and array-like objects _.isEmpty checks if the length property is 0.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isEmpty</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">if</span> (object.length !== <span class="hljs-literal">undefined</span>)
+        <span class="hljs-keyword">return</span> object.length === <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(object).length === <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is an Array.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isArray</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> object <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is a Function.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isFunction</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> object === <span class="hljs-string">"function"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if value is an Object. 
+ * Note that JavaScript arrays and functions are objects, 
+ * while (normal) strings and numbers are not.
+ * @param {*} value 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isObject</span>(<span class="hljs-params">value</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">"object"</span> &amp;&amp; !isArray(value) &amp;&amp; !isFunction(value);
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is a String.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isString</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> object === <span class="hljs-string">"string"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is a Number (including NaN).
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isNumber</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> object === <span class="hljs-string">"number"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is either true or false.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isBoolean</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> object === <span class="hljs-string">"boolean"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is a Date.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isDate</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.prototype.toString.call(object) === <span class="hljs-string">"[object Date]"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is a RegExp.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isRegExp</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.prototype.toString.call(object) === <span class="hljs-string">"[object RegExp]"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object inherits from an Error.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isError</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.prototype.toString.call(object) === <span class="hljs-string">"[object Error]"</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is NaN.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isNaN</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> object !== object;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if the value of object is null.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isNull</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> object === <span class="hljs-literal">null</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if value is undefined.
+ * @param {*} value 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isUndefine</span>(<span class="hljs-params">value</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">arguments</span>.length === <span class="hljs-number">1</span> &amp;&amp; value === <span class="hljs-literal">undefined</span>;
+}
+
+<span class="hljs-comment">/**
+ * Returns true if object is a finite Number.
+ * @param {*} object 
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isFinite</span>(<span class="hljs-params">object</span>) </span>{
+    <span class="hljs-keyword">return</span> isNumber(object) &amp;&amp; object !== <span class="hljs-literal">Infinity</span> &amp;&amp; object !== -<span class="hljs-literal">Infinity</span>;
+}
+<span class="hljs-built_in">module</span>.exports = {
+    keys,
+    allKeys,
+    values,
+    pairs,
+    invert,
+    functions,
+    extend,
+    pick,
+    omit,
+    defaults,
+    clone,
+    property,
+    isEqual,
+    isMatch,
+    isEmpty,
+    isArray,
+    isFunction,
+    isObject,
+    isString,
+    isNumber,
+    isBoolean,
+    isDate,
+    isRegExp,
+    isError,
+    <span class="hljs-built_in">isNaN</span>,
+    isNull,
+    isUndefine,
+    <span class="hljs-built_in">isFinite</span>
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const array = require("./array.js");
+const array = require("../src/array.js");
 
 test("first-normal", () => {
     expect(array.first([5, 6, 8])).toBe(5);

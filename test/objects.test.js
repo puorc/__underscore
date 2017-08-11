@@ -1,4 +1,4 @@
-const objects = require("./objects.js");
+const objects = require("../src/objects.js");
 
 test("objects-keys", () => {
     expect(objects.keys({
