@@ -3,7 +3,7 @@
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function isAvailable(array) {
-    return array.length !== undefined && array.length !== null;
+    return array !== null && array.length !== undefined && array.length > 0;
 }
 
 /**
@@ -14,7 +14,7 @@ function isAvailable(array) {
 function first(array) {
     var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-    if (isAvailable(array)) if (n === 1) return array[0];else return Array.prototype.slice.call(array, 0, n);
+    if (isAvailable(array)) if (n === 1) return array[0];else return initial(array, array.length - n);
 }
 
 /**
@@ -22,10 +22,11 @@ function first(array) {
  * @param {*} array 
  * @param {*} n 
  */
+// consider the case when n > length
 function initial(array) {
     var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-    if (isAvailable(array)) return Array.prototype.slice.call(array, 0, array.length - n);
+    if (isAvailable(array)) return Array.prototype.slice.call(array, 0, Math.max(0, array.length - n));
 }
 
 /**
@@ -36,7 +37,7 @@ function initial(array) {
 function last(array) {
     var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-    if (isAvailable(array)) if (n === 1) return array[array.length - 1];else return Array.prototype.slice.call(array, array.length - n);
+    if (isAvailable(array)) if (n === 1) return array[array.length - 1];else return rest(array, Math.max(0, array.length - n));
 }
 
 /**
@@ -47,7 +48,7 @@ function last(array) {
 function rest(array) {
     var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-    if (isAvailable(array, n = 1)) return Array.prototype.slice.call(array, index);
+    if (isAvailable(array)) return Array.prototype.slice.call(array, index);
 }
 
 function compact(array) {
@@ -62,13 +63,15 @@ function compact(array) {
  * @param {*} array 
  * @param {*} shallow 
  */
-function flatten(array) {
+// should not use function property to recursive. 
+// It could be treat as static vars.
+function flatten(array, output) {
     if (isAvailable(array)) {
-        if (!flatten.storeArray) flatten.storeArray = [];
+        output = output || [];
         Array.prototype.forEach.call(array, function (item) {
-            if (Array.isArray(item)) flatten(item);else flatten.storeArray.push(item);
+            if (Array.isArray(item)) flatten(item, output);else output.push(item);
         });
-        return flatten.storeArray;
+        return output;
     }
 }
 
@@ -101,11 +104,11 @@ function union() {
         arrays[_key2] = arguments[_key2];
     }
 
-    for (var i = 0; i < arrays.length; i++) {
-        arrays[i].forEach(function (item) {
-            s.add(item);
+    arrays.forEach(function (array) {
+        return array.forEach(function (item) {
+            return s.add(item);
         });
-    }
+    });
     return Array.from(s);
 }
 /**
@@ -113,24 +116,51 @@ function union() {
  * @param {*} arrays 
  */
 function intersection() {
-    var _storeArray;
-
-    var storeArray = [],
+    var contains = function contains(array, item) {
+        return array.some(function (element) {
+            return element === item;
+        });
+    },
         result = [];
-    //to avoid cases like [1, 2, 2] to be misjudged
-    if (arguments.length === 1) return arguments.length <= 0 ? undefined : arguments[0];
 
-    storeArray = (_storeArray = storeArray).concat.apply(_storeArray, arguments).sort();
-    var tmp = storeArray[0],
-        count = 0;
-    for (var i = 0; i < storeArray.length; i++) {
-        if (tmp === storeArray[i]) count++;else {
-            if (count >= arguments.length) result.push(tmp);
-            tmp = storeArray[i];
-            count = 1;
+    for (var _len3 = arguments.length, arrays = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        arrays[_key3] = arguments[_key3];
+    }
+
+    var _loop = function _loop(element) {
+        if (contains(result, element)) return "continue";
+        if (arrays.every(function (array) {
+            return contains(array, element);
+        })) result.push(element);
+    };
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = arrays[0][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var element = _step.value;
+
+            var _ret = _loop(element);
+
+            if (_ret === "continue") continue;
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
         }
     }
-    if (count >= arguments.length) result.push(tmp);
+
     return result;
 }
 
@@ -160,8 +190,8 @@ function difference(array) {
  * @param {*} arrays 
  */
 function zip() {
-    for (var _len3 = arguments.length, arrays = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-        arrays[_key3] = arguments[_key3];
+    for (var _len4 = arguments.length, arrays = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+        arrays[_key4] = arguments[_key4];
     }
 
     var result = [];
@@ -524,11 +554,11 @@ function sample(list, n) {
         if (n === undefined) {
             return list[utility.random(list.length - 1)];
         } else {
-            var _result = [];
+            var result = [];
             for (var i = 0; i < n; i++) {
-                _result.push(utility.random(list.length - 1));
+                result.push(utility.random(list.length - 1));
             }
-            return _result;
+            return result;
         }
     }
 }
@@ -567,8 +597,8 @@ function size(list) {
 function partition(array, predicate) {
     if (!array instanceof Array) return;
     var rightResult = [],
-        otherResult = [];
-    result = [];
+        otherResult = [],
+        result = [];
     for (var i = 0; i < array.length; i++) {
         predicate(array[i]) ? rightResult.push(array[i]) : otherResult.push(array[i]);
     }

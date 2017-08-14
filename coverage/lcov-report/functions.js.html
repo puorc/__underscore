@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for functions.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="index.html">All files</a> functions.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">25% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>8/32</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>0/12</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">26.67% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>4/15</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">25% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>8/32</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * Bind a function to an object, meaning that whenever the function is called, the value of this will be the object. 
+ * Optionally, pass arguments to the function to pre-fill them, also known as partial application.
+ * @param {*} func 
+ * @param {*} object 
+ * @param {*} args 
+ */
+function bind(func, object, ...args) {
+    return function() {
+        return func.apply(object, args);
+    }
+}
+&nbsp;
+// bugs here, remain to be solved.
+function <span class="fstat-no" title="function not covered" >partial(</span>func, ...args) {
+<span class="cstat-no" title="statement not covered" >    return bind(func, this, ...args);</span>
+}
+&nbsp;
+//memoize(function, [hashFunction]) 
+&nbsp;
+/**
+ * Much like setTimeout, invokes function after wait milliseconds. 
+ * If you pass the optional arguments, they will be forwarded on to the function when it is invoked.
+ * @param {*} func 
+ * @param {*} wait 
+ * @param {*} args 
+ */
+function <span class="fstat-no" title="function not covered" >delay(</span>func, wait, ...args) {
+<span class="cstat-no" title="statement not covered" >    return setTimeout(func, wait, ...args);</span>
+}
+&nbsp;
+/**
+ * Defers invoking the function until the current call stack has cleared, 
+ * similar to using setTimeout with a delay of 0. 
+ * @param {*} func 
+ * @param {*} args 
+ */
+function <span class="fstat-no" title="function not covered" >defer(</span>func, ...args) {
+<span class="cstat-no" title="statement not covered" >    return delay(func, ...args);</span>
+}
+&nbsp;
+/**
+ * Creates a version of the function that can only be called one time. Repeated calls to the modified function will have no effect, 
+ * returning the value from the original call. 
+ * Useful for initialization functions, instead of having to set a boolean flag and then check it later.
+ * @param {*} func 
+ */
+function <span class="fstat-no" title="function not covered" >once(</span>func) {
+<span class="cstat-no" title="statement not covered" >    return function <span class="fstat-no" title="function not covered" >newFunc(</span>) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!newFunc.isCalled) {</span>
+<span class="cstat-no" title="statement not covered" >            newFunc.isCalled = true;</span>
+<span class="cstat-no" title="statement not covered" >            newFunc.value = func();</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >            return newFunc.value;</span>
+        }
+    }
+}
+&nbsp;
+/**
+ * Creates a version of the function that will only be run after being called count times. 
+ * Useful for grouping asynchronous responses, where you want to be sure that all the async calls have finished, before proceeding.
+ * @param {*} count 
+ * @param {*} func 
+ */
+function <span class="fstat-no" title="function not covered" >after(</span>count, func) {
+<span class="cstat-no" title="statement not covered" >    return function <span class="fstat-no" title="function not covered" >newFunc(</span>) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!newFunc.calledTimes) {</span>
+<span class="cstat-no" title="statement not covered" >            newFunc.calledTimes = 1;</span>
+        } else <span class="cstat-no" title="statement not covered" >if (calledTimes &lt; count) {} else {</span>
+<span class="cstat-no" title="statement not covered" >            return func();</span>
+        }
+    }
+}
+&nbsp;
+/**
+ * Creates a version of the function that can be called no more than count times. 
+ * The result of the last function call is memoized and returned when count has been reached.
+ * @param {*} count 
+ * @param {*} func 
+ */
+function <span class="fstat-no" title="function not covered" >before(</span>count, func) {
+<span class="cstat-no" title="statement not covered" >    return function <span class="fstat-no" title="function not covered" >newFunc(</span>) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!newFunc.calledTimes) {</span>
+<span class="cstat-no" title="statement not covered" >            newFunc.calledTimes = 1;</span>
+<span class="cstat-no" title="statement not covered" >            return func();</span>
+        } else <span class="cstat-no" title="statement not covered" >if (newFunc.calledTimes &lt; count) {</span>
+            var result = <span class="cstat-no" title="statement not covered" >func();</span>
+<span class="cstat-no" title="statement not covered" >            if (newFunc.calledTimes = count - 1)</span>
+<span class="cstat-no" title="statement not covered" >                newFunc.value = result;</span>
+<span class="cstat-no" title="statement not covered" >            return result;</span>
+        } else {}
+    }
+}
+&nbsp;
+/**
+ * Returns a new negated version of the predicate function.
+ * @param {*} predicate 
+ */
+function <span class="fstat-no" title="function not covered" >negate(</span>predicate) {
+<span class="cstat-no" title="statement not covered" >    return <span class="fstat-no" title="function not covered" >fu</span>nction() {</span>
+<span class="cstat-no" title="statement not covered" >        return !predicate();</span>
+    }
+}
+&nbsp;
+function compose(...funcs) {
+    return function(value) {
+        var tmp = funcs[0](value);
+        for (let i = 1; i &lt; funcs.length; i++) {
+            tmp = funcs[i](tmp);
+        }
+        return tmp;
+    }
+}
+&nbsp;
+module.exports = {
+    bind,
+    partial,
+    delay,
+    defer,
+    compose
+}</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Mon Aug 14 2017 15:17:38 GMT-0400 (EDT)
+</div>
+</div>
+<script src="prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="sorter.js"></script>
+</body>
+</html>

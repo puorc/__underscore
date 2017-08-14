@@ -1,5 +1,5 @@
 function isAvailable(array) {
-    return array.length !== undefined && array.length !== null;
+    return array !== null && array.length !== undefined && array.length > 0;
 }
 
 /**
@@ -12,7 +12,7 @@ function first(array, n = 1) {
         if (n === 1)
             return array[0];
         else
-            return Array.prototype.slice.call(array, 0, n);
+            return initial(array, array.length - n);
 }
 
 /**
@@ -20,9 +20,10 @@ function first(array, n = 1) {
  * @param {*} array 
  * @param {*} n 
  */
+// consider the case when n > length
 function initial(array, n = 1) {
     if (isAvailable(array))
-        return Array.prototype.slice.call(array, 0, array.length - n);
+        return Array.prototype.slice.call(array, 0, Math.max(0, array.length - n));
 }
 
 /**
@@ -35,7 +36,7 @@ function last(array, n = 1) {
         if (n === 1)
             return array[array.length - 1];
         else
-            return Array.prototype.slice.call(array, array.length - n);
+            return rest(array, Math.max(0, array.length - n));
 }
 
 /**
@@ -50,7 +51,7 @@ function rest(array, index = 1) {
 
 function compact(array) {
     if (isAvailable(array)) {
-        return Array.prototype.filter.call(array, function(element) {
+        return Array.prototype.filter.call(array, function (element) {
             return Boolean(element);
         });
     }
@@ -60,17 +61,18 @@ function compact(array) {
  * @param {*} array 
  * @param {*} shallow 
  */
-function flatten(array) {
+// should not use function property to recursive. 
+// It could be treat as static vars.
+function flatten(array, output) {
     if (isAvailable(array)) {
-        if (!flatten.storeArray)
-            flatten.storeArray = [];
-        Array.prototype.forEach.call(array, function(item) {
+        output = output || [];
+        Array.prototype.forEach.call(array, function (item) {
             if (Array.isArray(item))
-                flatten(item);
+                flatten(item, output);
             else
-                flatten.storeArray.push(item);
+                output.push(item);
         });
-        return flatten.storeArray;
+        return output;
     }
 }
 
@@ -81,8 +83,8 @@ function flatten(array) {
  */
 function without(array, ...values) {
     if (isAvailable(array)) {
-        return Array.prototype.filter.call(array, function(item) {
-            return !values.some(function(items) {
+        return Array.prototype.filter.call(array, function (item) {
+            return !values.some(function (items) {
                 return items === item;
             });
         });
@@ -94,11 +96,7 @@ function without(array, ...values) {
  */
 function union(...arrays) {
     const s = new Set();
-    for (let i = 0; i < arrays.length; i++) {
-        arrays[i].forEach(function(item) {
-            s.add(item);
-        });
-    }
+    arrays.forEach(array => array.forEach(item => s.add(item)));
     return Array.from(s);
 }
 /**
@@ -106,27 +104,12 @@ function union(...arrays) {
  * @param {*} arrays 
  */
 function intersection(...arrays) {
-    var storeArray = [],
+    var contains = (array, item) => array.some(element => element === item),
         result = [];
-    //to avoid cases like [1, 2, 2] to be misjudged
-    if (arrays.length === 1)
-        return arrays[0];
-
-    storeArray = storeArray.concat(...arrays).sort();
-    var tmp = storeArray[0],
-        count = 0;
-    for (let i = 0; i < storeArray.length; i++) {
-        if (tmp === storeArray[i])
-            count++;
-        else {
-            if (count >= arrays.length)
-                result.push(tmp);
-            tmp = storeArray[i];
-            count = 1;
-        }
+    for (let element of arrays[0]) {
+        if (contains(result, element)) continue;
+        if (arrays.every(array => contains(array, element))) result.push(element);
     }
-    if (count >= arrays.length)
-        result.push(tmp);
     return result;
 }
 
@@ -158,7 +141,7 @@ function zip(...arrays) {
     var result = [];
     if (arrays.length === 0) return null;
     if (arrays.length === 1) return arrays[0];
-    if (!arrays.every(function(item) {
+    if (!arrays.every(function (item) {
             return item.length === arrays[0].length;
         })) {
         return null;
@@ -191,7 +174,7 @@ function unzip(arrays) {
 function object(list, values) {
     var returnObject = {};
     if (Array.isArray(list) && Array.isArray(values)) {
-        list.forEach(function(item, index) {
+        list.forEach(function (item, index) {
             returnObject[item] = values[index];
         });
     }
