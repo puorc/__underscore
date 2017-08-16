@@ -82,6 +82,7 @@ function functions(object) {
  * @param {*} sources 
  */
 function extend(destination, ...sources) {
+    if (destination === undefined) return null;
     sources.forEach(function (element) {
         for (let key in element) {
             destination[key] = element[key];
@@ -99,12 +100,12 @@ function extend(destination, ...sources) {
 function pick(object, ...keys) {
     var returnObject = {};
     for (let i = 0; i < keys.length; i++) {
-        if (typeof keys[i] === "string") {
+        if (isString(keys[i])) {
             for (let key in object)
                 if (key === keys[i])
                     returnObject[key] = object[key];
         }
-        if (typeof keys[i] === "function") {
+        if (isFunction(keys[i])) {
             for (let key in object) {
                 if (keys[i](object[key], key, object))
                     returnObject[key] = object[key];
@@ -123,12 +124,12 @@ function pick(object, ...keys) {
 function omit(object, ...keys) {
     var returnObject = {};
     for (let i = 0; i < keys.length; i++) {
-        if (typeof keys[i] === "string") {
+        if (isString(keys[i])) {
             for (let key in object)
                 if (key !== keys[i])
                     returnObject[key] = object[key];
         }
-        if (typeof keys[i] === "function") {
+        if (isFunction(keys[i])) {
             for (let key in object) {
                 if (!keys[i](object[key], key, object))
                     returnObject[key] = object[key];
@@ -145,7 +146,7 @@ function omit(object, ...keys) {
  */
 function defaults(object, ...defaults) {
     defaults.forEach(function (item) {
-        if (typeof item === "object") {
+        if (isObject(item)) {
             for (let key in item) {
                 if (object[key] === undefined)
                     object[key] = item[key];
@@ -156,11 +157,8 @@ function defaults(object, ...defaults) {
 }
 
 function clone(object) {
-    var returnObject = {};
-    for (let key in object) {
-        returnObject[key] = object[key];
-    }
-    return returnObject;
+    if (!isObject(object)) return object;
+    return isArray(object) ? object.slice() : extend({}, object);
 }
 
 // tap(object, interceptor)  remains to be done
@@ -182,15 +180,50 @@ function property(key) {
  * @param {*} other 
  */
 function isEqual(object, other) {
-    for (let key in object) {
-        if (object[key] !== null && typeof object[key] === "object") {
-            return isEqual(object[key], other[key]);
-        } else {
-            if (object[key] !== other[key])
-                return false;
-        }
+    return isEq(object, other);
+}
+
+function isEq(a, b) {
+    // deal with +0 != -0 case
+    if (a === b) return a !== 0 || 1 / a === 1 / bo;
+    // a can be null or undefined
+    if (a == null || b == null) return false;
+    // deal with NaN
+    if (a !== a) return b !== b;
+    var type = typeof a;
+    // No primitive type. Start compare object types.
+    if (type !== "function" && type !== "object" && typeof b !== "function" && typeof b !== "object") return false;
+    return deepEq(a, b);
+}
+
+function deepEq(a, b) {
+    var NameOfA = Object.prototype.toString.call(a),
+        NameOfB = Object.prototype.toString.call(b);
+    if (NameOfA !== NameOfB) return false;
+    switch (NameOfA) {
+        case '[object RegExp]':
+        case '[object String]':
+            return '' + a === '' + b;
+        case '[object Number]':
+            return isEq(+a, +b);
+        case '[object Date]':
+        case '[object Boolean]':
+            return +a === +b;
+        case '[object Symbol]':
+            return Symbol.prototype.valueOf.call(a) === Symbol.prototype.valueOf.call(b);
+        case '[object Array]':
+            if (a.length !== b.length) return false;
+            for (let i = 0; i < length; i++) {
+                if (!isEq(a[i], b[i])) return false;
+            }
+            return true;
+        default:
+            let keys = Object.getOwnPropertyNames(a);
+            for (let key of keys) {
+                if (!(key in b) || !isEq(a[key], b[key])) return false;
+            }
+            return true;
     }
-    return true;
 }
 
 /**
@@ -212,6 +245,7 @@ function isMatch(object, properties) {
  * @param {*} object 
  */
 function isEmpty(object) {
+    if (object === null) return true;
     if (object.length !== undefined)
         return object.length === 0;
     else
@@ -223,7 +257,7 @@ function isEmpty(object) {
  * @param {*} object 
  */
 function isArray(object) {
-    return object instanceof Array;
+    return Array.isArray(object) || object instanceof Array;
 }
 
 /**

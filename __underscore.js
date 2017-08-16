@@ -851,6 +851,8 @@ function functions(object) {
  * @param {*} sources 
  */
 function extend(destination) {
+    if (destination === undefined) return null;
+
     for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         sources[_key - 1] = arguments[_key];
     }
@@ -877,12 +879,12 @@ function pick(object) {
     }
 
     for (var i = 0; i < keys.length; i++) {
-        if (typeof keys[i] === "string") {
+        if (isString(keys[i])) {
             for (var key in object) {
                 if (key === keys[i]) returnObject[key] = object[key];
             }
         }
-        if (typeof keys[i] === "function") {
+        if (isFunction(keys[i])) {
             for (var _key3 in object) {
                 if (keys[i](object[_key3], _key3, object)) returnObject[_key3] = object[_key3];
             }
@@ -905,12 +907,12 @@ function omit(object) {
     }
 
     for (var i = 0; i < keys.length; i++) {
-        if (typeof keys[i] === "string") {
+        if (isString(keys[i])) {
             for (var key in object) {
                 if (key !== keys[i]) returnObject[key] = object[key];
             }
         }
-        if (typeof keys[i] === "function") {
+        if (isFunction(keys[i])) {
             for (var _key5 in object) {
                 if (!keys[i](object[_key5], _key5, object)) returnObject[_key5] = object[_key5];
             }
@@ -930,7 +932,7 @@ function defaults(object) {
     }
 
     defaults.forEach(function (item) {
-        if ((typeof item === "undefined" ? "undefined" : _typeof(item)) === "object") {
+        if (isObject(item)) {
             for (var key in item) {
                 if (object[key] === undefined) object[key] = item[key];
             }
@@ -940,11 +942,8 @@ function defaults(object) {
 }
 
 function clone(object) {
-    var returnObject = {};
-    for (var key in object) {
-        returnObject[key] = object[key];
-    }
-    return returnObject;
+    if (!isObject(object)) return object;
+    return isArray(object) ? object.slice() : extend({}, object);
 }
 
 // tap(object, interceptor)  remains to be done
@@ -966,14 +965,72 @@ function property(key) {
  * @param {*} other 
  */
 function isEqual(object, other) {
-    for (var key in object) {
-        if (object[key] !== null && _typeof(object[key]) === "object") {
-            return isEqual(object[key], other[key]);
-        } else {
-            if (object[key] !== other[key]) return false;
-        }
+    return isEq(object, other);
+}
+
+function isEq(a, b) {
+    // deal with +0 != -0 case
+    if (a === b) return a !== 0 || 1 / a === 1 / bo;
+    // a can be null or undefined
+    if (a == null || b == null) return false;
+    // deal with NaN
+    if (a !== a) return b !== b;
+    var type = typeof a === "undefined" ? "undefined" : _typeof(a);
+    // No primitive type. Start compare object types.
+    if (type !== "function" && type !== "object" && typeof b !== "function" && (typeof b === "undefined" ? "undefined" : _typeof(b)) !== "object") return false;
+    return deepEq(a, b);
+}
+
+function deepEq(a, b) {
+    var NameOfA = Object.prototype.toString.call(a),
+        NameOfB = Object.prototype.toString.call(b);
+    if (NameOfA !== NameOfB) return false;
+    switch (NameOfA) {
+        case '[object RegExp]':
+        case '[object String]':
+            return '' + a === '' + b;
+        case '[object Number]':
+            return isEq(+a, +b);
+        case '[object Date]':
+        case '[object Boolean]':
+            return +a === +b;
+        case '[object Symbol]':
+            return Symbol.prototype.valueOf.call(a) === Symbol.prototype.valueOf.call(b);
+        case '[object Array]':
+            if (a.length !== b.length) return false;
+            for (var i = 0; i < length; i++) {
+                if (!isEq(a[i], b[i])) return false;
+            }
+            return true;
+        default:
+            var _keys = Object.getOwnPropertyNames(a);
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = _keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var key = _step.value;
+
+                    if (!(key in b) || !isEq(a[key], b[key])) return false;
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            return true;
     }
-    return true;
 }
 
 /**
@@ -994,6 +1051,7 @@ function isMatch(object, properties) {
  * @param {*} object 
  */
 function isEmpty(object) {
+    if (object === null) return true;
     if (object.length !== undefined) return object.length === 0;else return Object.keys(object).length === 0;
 }
 
@@ -1002,7 +1060,7 @@ function isEmpty(object) {
  * @param {*} object 
  */
 function isArray(object) {
-    return object instanceof Array;
+    return Array.isArray(object) || object instanceof Array;
 }
 
 /**
