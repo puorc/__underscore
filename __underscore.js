@@ -404,25 +404,9 @@ function filter(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            for (var i = 0; i < list.length; i++) {
-                if (predicate(list[i])) {
-                    result.push(list[i]);
-                }
-            }
-            break;
-        case TYPE.object:
-            for (var key in list) {
-                if (predicate(list[key])) {
-                    result.push(list[key]);
-                }
-            }
-            break;
-        case TYPE.others:
-        default:
-            return;
-    }
+    each(list, function (value, index, list) {
+        if (bindedIteratee(value, index, list)) result.push(value);
+    });
     return result;
 }
 
@@ -441,12 +425,12 @@ function every(list, predicate, context) {
     switch (determineType(list)) {
         case TYPE.array_like:
             for (var i = 0; i < list.length; i++) {
-                if (!predicate(list[i])) return false;
+                if (!predicate(list[i], i, list)) return false;
             }
             break;
         case TYPE.object:
             for (var key in list) {
-                if (!predicate(list[key])) {
+                if (!predicate(list[key], key, list)) {
                     return false;
                 }
             }
@@ -470,18 +454,15 @@ function some(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    if (predicate === undefined) {
-        predicate = Boolean;
-    }
     switch (determineType(list)) {
         case TYPE.array_like:
             for (var i = 0; i < list.length; i++) {
-                if (predicate(list[i])) return true;
+                if (predicate(list[i], i, list)) return true;
             }
             break;
         case TYPE.object:
             for (var key in list) {
-                if (predicate(list[key])) {
+                if (predicate(list[key], key, list)) {
                     return true;
                 }
             }
@@ -577,6 +558,7 @@ function toArray(list) {
  * @param {*} list 
  */
 function size(list) {
+    if (list == null) return 0;
     switch (determineType(list)) {
         case TYPE.array_like:
             return list.length;
@@ -619,7 +601,9 @@ module.exports = {
     size: size,
     partition: partition
 };
-"use strict";
+'use strict';
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 /**
  * Bind a function to an object, meaning that whenever the function is called, the value of this will be the object. 
@@ -633,12 +617,16 @@ function bind(func, object) {
         args[_key - 2] = arguments[_key];
     }
 
-    return function () {
-        return func.apply(object, args);
+    return function (calledArgs) {
+        return func.apply(object, args.concat(calledArgs));
     };
 }
 
-// bugs here, remain to be solved.
+/**
+ * Partially apply a function by filling in any number of its arguments, without changing its dynamic this value.
+ * @param {*} func 
+ * @param {*} args 
+ */
 function partial(func) {
     for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
@@ -647,7 +635,21 @@ function partial(func) {
     return bind.apply(undefined, [func, this].concat(args));
 }
 
-//memoize(function, [hashFunction]) 
+/**
+ * Memoizes a given function by caching the computed result. Useful for speeding up slow-running computations. 
+ * @param {*} func 
+ * @param {*} hash 
+ */
+function memoize(func, hash) {
+    var memoize = function memoize(key) {
+        var cache = memoize.cache;
+        var addr = '' + (hash ? hash.apply(this, arguments) : key);
+        if (!(addr in cache)) cache[addr] = func.apply(this, arguments);
+        return cache[addr];
+    };
+    memoize.cache = {};
+    return memoize;
+}
 
 /**
  * Much like setTimeout, invokes function after wait milliseconds. 
@@ -685,12 +687,14 @@ function defer(func) {
  * @param {*} func 
  */
 function once(func) {
-    return function newFunc() {
-        if (!newFunc.isCalled) {
-            newFunc.isCalled = true;
-            newFunc.value = func();
+    var isRun = false,
+        result;
+    return function () {
+        if (!isRun) {
+            result = func.apply(undefined, _toConsumableArray(Array.prototype.slice(arguments)));
+            isRun = true;
         } else {
-            return newFunc.value;
+            return result;
         }
     };
 }
@@ -702,11 +706,9 @@ function once(func) {
  * @param {*} func 
  */
 function after(count, func) {
-    return function newFunc() {
-        if (!newFunc.calledTimes) {
-            newFunc.calledTimes = 1;
-        } else if (calledTimes < count) {} else {
-            return func();
+    return function () {
+        if (--count < 1) {
+            return func.apply(undefined, _toConsumableArray(Array.prototype.slice(arguments)));
         }
     };
 }
@@ -718,15 +720,13 @@ function after(count, func) {
  * @param {*} func 
  */
 function before(count, func) {
-    return function newFunc() {
-        if (!newFunc.calledTimes) {
-            newFunc.calledTimes = 1;
-            return func();
-        } else if (newFunc.calledTimes < count) {
-            var result = func();
-            if (newFunc.calledTimes = count - 1) newFunc.value = result;
-            return result;
-        } else {}
+    var memo;
+    return function () {
+        if (--count > 0) {
+            memo = func.apply(this, arguments);
+        }
+        if (count <= 1) func = null;
+        return memo;
     };
 }
 
@@ -736,7 +736,7 @@ function before(count, func) {
  */
 function negate(predicate) {
     return function () {
-        return !predicate();
+        return !predicate.apply(this, arguments);
     };
 }
 
@@ -745,10 +745,10 @@ function compose() {
         funcs[_key5] = arguments[_key5];
     }
 
-    return function (value) {
-        var tmp = funcs[0](value);
+    return function () {
+        var tmp = funcs[0].apply(this, arguments);
         for (var i = 1; i < funcs.length; i++) {
-            tmp = funcs[i](tmp);
+            tmp = funcs[i].call(this, tmp);
         }
         return tmp;
     };
@@ -759,7 +759,8 @@ module.exports = {
     partial: partial,
     delay: delay,
     defer: defer,
-    compose: compose
+    compose: compose,
+    memoize: memoize
 };
 "use strict";
 
@@ -1209,16 +1210,11 @@ function constant(value) {
  * @param {*} max 
  */
 function random(min, max) {
-    var theMin, theMax, difference;
-    if (arguments.length === 2) {
-        theMin = arguments[0];
-        theMax = arguments[1];
-    } else if (arguments.length === 1) {
-        theMin = 0;
-        theMax = arguments[0];
-    } else return;
-    difference = theMax - theMin;
-    return Math.ceil(Math.random() * difference + theMin);
+    if (max == null) {
+        max = min;
+        min = 0;
+    }
+    return min + Math.floor(Math.random * (max - min + 1));
 }
 
 /**

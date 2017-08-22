@@ -6,17 +6,35 @@
  * @param {*} args 
  */
 function bind(func, object, ...args) {
-    return function() {
-        return func.apply(object, args);
+    return function (calledArgs) {
+        return func.apply(object, args.concat(calledArgs));
     }
 }
 
-// bugs here, remain to be solved.
+/**
+ * Partially apply a function by filling in any number of its arguments, without changing its dynamic this value.
+ * @param {*} func 
+ * @param {*} args 
+ */
 function partial(func, ...args) {
     return bind(func, this, ...args);
 }
 
-//memoize(function, [hashFunction]) 
+/**
+ * Memoizes a given function by caching the computed result. Useful for speeding up slow-running computations. 
+ * @param {*} func 
+ * @param {*} hash 
+ */
+function memoize(func, hash) {
+    var memoize = function (key) {
+        var cache = memoize.cache;
+        var addr = '' + (hash ? hash.apply(this, arguments) : key);
+        if (!(addr in cache)) cache[addr] = func.apply(this, arguments);
+        return cache[addr];
+    };
+    memoize.cache = {};
+    return memoize;
+}
 
 /**
  * Much like setTimeout, invokes function after wait milliseconds. 
@@ -46,14 +64,17 @@ function defer(func, ...args) {
  * @param {*} func 
  */
 function once(func) {
-    return function newFunc() {
-        if (!newFunc.isCalled) {
-            newFunc.isCalled = true;
-            newFunc.value = func();
-        } else {
-            return newFunc.value;
+    var isRun = false,
+    result;
+    return function () {
+        if (!isRun) {
+            result = func(...Array.prototype.slice(arguments));
+            isRun = true;
         }
-    }
+        else {
+            return result;
+        }
+    };
 }
 
 /**
@@ -63,11 +84,9 @@ function once(func) {
  * @param {*} func 
  */
 function after(count, func) {
-    return function newFunc() {
-        if (!newFunc.calledTimes) {
-            newFunc.calledTimes = 1;
-        } else if (calledTimes < count) {} else {
-            return func();
+    return function () {
+        if (--count < 1) {
+            return func(...Array.prototype.slice(arguments));
         }
     }
 }
@@ -79,17 +98,14 @@ function after(count, func) {
  * @param {*} func 
  */
 function before(count, func) {
-    return function newFunc() {
-        if (!newFunc.calledTimes) {
-            newFunc.calledTimes = 1;
-            return func();
-        } else if (newFunc.calledTimes < count) {
-            var result = func();
-            if (newFunc.calledTimes = count - 1)
-                newFunc.value = result;
-            return result;
-        } else {}
-    }
+    var memo;
+    return function () {
+        if (--count > 0) {
+            memo = func.apply(this, arguments);
+        }
+        if (count <= 1) func = null;
+        return memo;
+    };
 }
 
 /**
@@ -97,16 +113,16 @@ function before(count, func) {
  * @param {*} predicate 
  */
 function negate(predicate) {
-    return function() {
-        return !predicate();
+    return function () {
+        return !predicate.apply(this, arguments);
     }
 }
 
 function compose(...funcs) {
-    return function(value) {
-        var tmp = funcs[0](value);
+    return function () {
+        var tmp = funcs[0].apply(this, arguments);
         for (let i = 1; i < funcs.length; i++) {
-            tmp = funcs[i](tmp);
+            tmp = funcs[i].call(this, tmp);
         }
         return tmp;
     }
@@ -117,5 +133,6 @@ module.exports = {
     partial,
     delay,
     defer,
-    compose
+    compose,
+    memoize
 }

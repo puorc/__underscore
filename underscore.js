@@ -935,7 +935,7 @@
     // Returns a negated version of the passed-in predicate.
     _.negate = function(predicate) {
         return function() {
-            return !predicate.apply(this, arguments);
+            return !predicate(...Array.prototype.slice(arguments));
         };
     };
 

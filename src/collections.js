@@ -111,25 +111,10 @@ function filter(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            for (let i = 0; i < list.length; i++) {
-                if (predicate(list[i])) {
-                    result.push(list[i]);
-                }
-            }
-            break;
-        case TYPE.object:
-            for (let key in list) {
-                if (predicate(list[key])) {
-                    result.push(list[key]);
-                }
-            }
-            break;
-        case TYPE.others:
-        default:
-            return;
-    }
+    each(list, function (value, index, list) {
+        if (bindedIteratee(value, index, list))
+            result.push(value);
+    });
     return result;
 }
 
@@ -148,13 +133,13 @@ function every(list, predicate, context) {
     switch (determineType(list)) {
         case TYPE.array_like:
             for (let i = 0; i < list.length; i++) {
-                if (!predicate(list[i]))
+                if (!predicate(list[i], i, list))
                     return false;
             }
             break;
         case TYPE.object:
             for (let key in list) {
-                if (!predicate(list[key])) {
+                if (!predicate(list[key], key, list)) {
                     return false;
                 }
             }
@@ -178,19 +163,16 @@ function some(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    if (predicate === undefined) {
-        predicate = Boolean;
-    }
     switch (determineType(list)) {
         case TYPE.array_like:
             for (let i = 0; i < list.length; i++) {
-                if (predicate(list[i]))
+                if (bindedIteratee(list[i], i, list))
                     return true;
             }
             break;
         case TYPE.object:
             for (let key in list) {
-                if (predicate(list[key])) {
+                if (bindedIteratee(list[key], key, list)) {
                     return true;
                 }
             }
@@ -285,6 +267,7 @@ function toArray(list) {
  * @param {*} list 
  */
 function size(list) {
+    if (list == null) return 0;
     switch (determineType(list)) {
         case TYPE.array_like:
             return list.length;
@@ -305,8 +288,8 @@ function size(list) {
 function partition(array, predicate) {
     if (!array instanceof Array) return;
     var rightResult = [],
-    otherResult = [],
-    result = [];
+        otherResult = [],
+        result = [];
     for (let i = 0; i < array.length; i++) {
         predicate(array[i]) ? rightResult.push(array[i]) : otherResult.push(array[i]);
     }

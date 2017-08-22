@@ -1,10 +1,7 @@
-const objects = require("./src/objects.js");
-var stooge = {
-    name: 'moe',
-    luckyNumbers: [13, 27, [2, 3]]
-};
-var clone = {
-    name: 'moe',
-    luckyNumbers: [13, 27, [2, 3]]
-};
-\objects.isEqual(stooge, clone)
+const _ = require("./underscore.js");
+
+var fibonacci = _.memoize(function (n) {
+    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
+});
+
+fibonacci(8);

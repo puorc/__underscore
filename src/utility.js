@@ -15,17 +15,11 @@ function constant(value) {
  * @param {*} max 
  */
 function random(min, max) {
-    var theMin, theMax, difference;
-    if (arguments.length === 2) {
-        theMin = arguments[0];
-        theMax = arguments[1];
-    } else if (arguments.length === 1) {
-        theMin = 0;
-        theMax = arguments[0];
-    } else
-        return;
-    difference = theMax - theMin;
-    return Math.ceil(Math.random() * difference + theMin);
+    if (max == null) {
+        max = min;
+        min = 0;
+    }
+    return min + Math.floor(Math.random * (max - min + 1));
 }
 
 /**
