@@ -1,3 +1,12 @@
-const objects = require("./src/objects.js");
+const functions = require("./src/functions.js");
 
-objects.isEqual([5, 10, 8], [5, 7, 8])
+var func = function constant() {
+    if (!constant.num)
+        constant.num = 0;
+    else
+        constant.num++;
+    return constant.num;
+},
+onceFunc = functions.once(func);
+
+onceFunc();

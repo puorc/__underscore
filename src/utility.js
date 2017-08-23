@@ -19,7 +19,7 @@ function random(min, max) {
         max = min;
         min = 0;
     }
-    return min + Math.floor(Math.random * (max - min + 1));
+    return min + Math.floor(Math.random() * (max - min + 1));
 }
 
 /**
@@ -32,12 +32,10 @@ function random(min, max) {
  */
 function result(object, property, defaultValue) {
     if (object[property] === undefined) {
-        if (defaultValue !== undefined) {
-            if (typeof defaultValue === "function") {
-                return defaultValue(object);
-            } else
-                return defaultValue;
-        }
+        if (typeof defaultValue === "function") {
+            return defaultValue(object);
+        } else
+            return defaultValue;
     } else {
         if (typeof object[property] === "function")
             return object[property](object);

@@ -54,7 +54,7 @@ function delay(func, wait, ...args) {
  * @param {*} args 
  */
 function defer(func, ...args) {
-    return delay(func, ...args);
+    return setTimeout(func, 0, ...args);
 }
 
 /**
@@ -68,8 +68,9 @@ function once(func) {
     result;
     return function () {
         if (!isRun) {
-            result = func(...Array.prototype.slice(arguments));
+            result = func(...arguments);
             isRun = true;
+            return result;
         }
         else {
             return result;
@@ -85,7 +86,7 @@ function once(func) {
  */
 function after(count, func) {
     return function () {
-        if (--count < 1) {
+        if (count-- < 1) {
             return func(...Array.prototype.slice(arguments));
         }
     }
@@ -100,10 +101,9 @@ function after(count, func) {
 function before(count, func) {
     var memo;
     return function () {
-        if (--count > 0) {
+        if (count-- > 0) {
             memo = func.apply(this, arguments);
         }
-        if (count <= 1) func = null;
         return memo;
     };
 }
@@ -134,5 +134,9 @@ module.exports = {
     delay,
     defer,
     compose,
-    memoize
+    memoize,
+    negate,
+    once,
+    after,
+    before
 }
