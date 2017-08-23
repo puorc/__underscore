@@ -1,12 +1,3 @@
-const functions = require("./src/functions.js");
+const collections = require("./src/collections.js");
 
-var func = function constant() {
-    if (!constant.num)
-        constant.num = 0;
-    else
-        constant.num++;
-    return constant.num;
-},
-onceFunc = functions.once(func);
-
-onceFunc();
+collections.each([1, 2, 3], item => item);

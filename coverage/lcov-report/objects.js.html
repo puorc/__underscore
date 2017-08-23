@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">93.22% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>118/118</span>
+        <span class='fraction'>110/118</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">94.67% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>75/75</span>
+        <span class='fraction'>71/75</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">93.94% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>33/33</span>
+        <span class='fraction'>31/33</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">100% </span>
+        <span class="strong">92.59% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>108/108</span>
+        <span class='fraction'>100/108</span>
       </div>
     </div>
   </div>
@@ -427,7 +427,7 @@
 382
 383
 384
-385</td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+385</td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -514,10 +514,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -575,14 +575,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -682,7 +682,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">100x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -690,7 +690,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -700,7 +700,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">40x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -782,7 +782,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -897,11 +897,11 @@ function functions(object) {
  * @param {*} sources 
  */
 function extend(destination, ...sources) {
-    collections.each(sources, element =&gt; {
-        for (let key in element)
-            destination[key] = element[key];
+    collections.each(sources, <span class="fstat-no" title="function not covered" >el</span>ement =&gt; {
+<span class="cstat-no" title="statement not covered" >        for (let key in element)</span>
+<span class="cstat-no" title="statement not covered" >            destination[key] = element[key];</span>
     });
-    return destination;
+<span class="cstat-no" title="statement not covered" >    return destination;</span>
 }
 &nbsp;
 /**
@@ -958,15 +958,15 @@ function omit(object, ...keys) {
  * @param {*} defaults 
  */
 function defaults(object, ...defaults) {
-    collections.each(defaults, function (item) {
-        if (isObject(item)) {
-            for (let key in item) {
-                if (object[key] === undefined)
-                    object[key] = item[key];
+    collections.each(defaults, <span class="fstat-no" title="function not covered" >fu</span>nction (item) {
+<span class="cstat-no" title="statement not covered" >        if (isObject(item)) {</span>
+<span class="cstat-no" title="statement not covered" >            for (let key in item) {</span>
+<span class="cstat-no" title="statement not covered" >                if (object[key] === undefined)</span>
+<span class="cstat-no" title="statement not covered" >                    object[key] = item[key];</span>
             }
         }
     })
-    return object;
+<span class="cstat-no" title="statement not covered" >    return object;</span>
 }
 &nbsp;
 function clone(object) {
@@ -1201,7 +1201,7 @@ module.exports = {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Aug 23 2017 14:34:10 GMT-0400 (EDT)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Aug 23 2017 16:50:42 GMT-0400 (EDT)
 </div>
 </div>
 <script src="prettify.js"></script>

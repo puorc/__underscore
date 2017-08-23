@@ -1,19 +1,6 @@
 const utility = require("./utility.js");
-const TYPE = {
-    array_like: Symbol("array_like"),
-    object: Symbol("object"),
-    others: Symbol("others")
-}
-
-function determineType(list) {
-    if (list.length !== undefined) {
-        return TYPE.array_like;
-    } else if (list !== null && typeof list === "object") {
-        return TYPE.object;
-    } else
-        return TYPE.others;
-}
-
+const objects = require("./objects.js");
+const functions = require("./functions.js")
 /**
  * Iterates over a list of elements, yielding each in turn to an iteratee function. The iteratee is bound to the context object, if one is passed.
  * Each invocation of iteratee is called with three arguments: (element, index, list). If list is a JavaScript object, iteratee's arguments will be (value, key, list). 
@@ -27,20 +14,15 @@ function each(list, iteratee, context) {
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            for (let i = 0; i < list.length; i++) {
-                bindedIteratee(list[i], i, list);
-            }
-            break;
-        case TYPE.object:
-            for (let key in list) {
-                bindedIteratee(list[key], key, list);
-            }
-            break;
-        case TYPE.others:
-        default:
-            return;
+    if (objects.isObject(list)) {
+        for (let key in list) {
+            bindedIteratee(list[key], key, list);
+        }
+    }
+    if (objects.isArray(list)) {
+        for (let i = 0; i < list.length; i++) {
+            bindedIteratee(list[i], i, list);
+        }
     }
 }
 
@@ -57,20 +39,15 @@ function map(list, iteratee, context) {
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            for (let i = 0; i < list.length; i++) {
-                returnArray.push(bindedIteratee(list[i], i, list));
-            }
-            break;
-        case TYPE.object:
-            for (let key in list) {
-                returnArray.push(bindedIteratee(list[key], key, list));
-            }
-            break;
-        case TYPE.others:
-        default:
-            break;
+    if (objects.isArray(list)) {
+        for (let i = 0; i < list.length; i++) {
+            returnArray.push(bindedIteratee(list[i], i, list));
+        }
+    }
+    if (objects.isObject(list)) {
+        for (let key in list) {
+            returnArray.push(bindedIteratee(list[key], key, list));
+        }
     }
     return returnArray;
 }
@@ -130,23 +107,18 @@ function every(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            for (let i = 0; i < list.length; i++) {
-                if (!predicate(list[i], i, list))
-                    return false;
+    if (objects.isArray(list)) {
+        for (let i = 0; i < list.length; i++) {
+            if (!bindedIteratee(list[i], i, list))
+                return false;
+        }
+    }
+    if (objects.isObject(list)) {
+        for (let key in list) {
+            if (!bindedIteratee(list[key], key, list)) {
+                return false;
             }
-            break;
-        case TYPE.object:
-            for (let key in list) {
-                if (!predicate(list[key], key, list)) {
-                    return false;
-                }
-            }
-            break;
-        case TYPE.others:
-        default:
-            break;
+        }
     }
     return true;
 }
@@ -163,23 +135,18 @@ function some(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            for (let i = 0; i < list.length; i++) {
-                if (bindedIteratee(list[i], i, list))
-                    return true;
+    if (objects.isArray(list)) {
+        for (let i = 0; i < list.length; i++) {
+            if (bindedIteratee(list[i], i, list))
+                return true;
+        }
+    }
+    if (objects.isObject(list)) {
+        for (let key in list) {
+            if (bindedIteratee(list[key], key, list)) {
+                return true;
             }
-            break;
-        case TYPE.object:
-            for (let key in list) {
-                if (bindedIteratee(list[key], key, list)) {
-                    return true;
-                }
-            }
-            break;
-        case TYPE.others:
-        default:
-            break;
+        }
     }
     return false;
 }
@@ -193,6 +160,9 @@ function pluck(list, propertyName) {
     return map(list, function (item) {
         if (propertyName in item) {
             return item[propertyName];
+        }
+        else {
+            return void 0;
         }
     });
 }
@@ -209,25 +179,21 @@ function max(list, iteratee, context) {
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            let isFirstTime = true;
-            for (let i = 0; i < list.length; i++) {
-                if (typeof bindedIteratee(list[i], i, list) === "number") {
-                    if (isFirstTime) {
-                        max = bindedIteratee(list[i], i, list);
-                        maxObj = list[i];
-                        isFirstTime = false;
-                    }
-                    if (bindedIteratee(list[i], i, list) > max) {
-                        max = bindedIteratee(list[i], i, list);
-                        maxObj = list[i];
-                    }
+    if (objects.isArray(list)) {
+        let isFirstTime = true;
+        for (let i = 0; i < list.length; i++) {
+            if (typeof bindedIteratee(list[i], i, list) === "number") {
+                if (isFirstTime) {
+                    max = bindedIteratee(list[i], i, list);
+                    maxObj = list[i];
+                    isFirstTime = false;
+                }
+                if (bindedIteratee(list[i], i, list) > max) {
+                    max = bindedIteratee(list[i], i, list);
+                    maxObj = list[i];
                 }
             }
-            break;
-        default:
-            return;
+        }
     }
     return maxObj;
 }
@@ -268,16 +234,9 @@ function toArray(list) {
  */
 function size(list) {
     if (list == null) return 0;
-    switch (determineType(list)) {
-        case TYPE.array_like:
-            return list.length;
-            break;
-        case TYPE.object:
-            return Object.keys(list).length;
-            break;
-        default:
-            break;
-    }
+    if (objects.isArray(list)) return list.length;
+    if (objects.isObject(list)) return Object.keys(list).length;
+    return 0;
 }
 
 /**
@@ -286,7 +245,7 @@ function size(list) {
  * @param {*} predicate 
  */
 function partition(array, predicate) {
-    if (!array instanceof Array) return;
+    if (!array instanceof Array) return [];
     var rightResult = [],
         otherResult = [],
         result = [];
