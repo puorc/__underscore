@@ -78,12 +78,20 @@ test("flatten-normal", () => {
     ])).toEqual([1, 2, 3, 4])
 })
 
+test("flattern-abnormal", () => {
+    expect(array.flatten(8)).toEqual([]);
+})
+
 test("without-normal", () => {
     expect(array.without([1, 2, 1, 0, 3, 1, 4], 0, 1)).toEqual([2, 3, 4])
 })
 
 test("without-abnormal", () => {
     expect(array.without([1, 2, 1, 0, 3, 1, 4])).toEqual([1, 2, 1, 0, 3, 1, 4]);
+})
+
+test("without-no-array", () => {
+    expect(array.without(8)).toEqual([]);
 })
 
 test("union-normal", () => {
@@ -95,7 +103,7 @@ test("union-abnormal", () => {
 })
 
 test("intersection-normal", () => {
-    expect(array.intersection([1, 2, 3], [101, 2, 1, 10], [2, 1])).toEqual([1, 2]);
+    expect(array.intersection([1, 2, 3, 2], [101, 2, 1, 10], [2, 1])).toEqual([1, 2]);
 })
 
 test("intersection-different", () => {
@@ -128,6 +136,10 @@ test("zip-notEqualLen", () => {
 
 test("zip-null", () => {
     expect(array.zip()).toBeNull();
+})
+
+test("zip-single-element", () => {
+    expect(array.zip([1, 2, 3])).toEqual([1, 2, 3]);
 })
 
 test("unzip-normal", () => {

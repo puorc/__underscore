@@ -1,5 +1,8 @@
-function isAvailable(array) {
-    return array !== null && array.length !== undefined && array.length > 0;
+const collections = require("./collections.js");
+const objects = require("./objects.js");
+
+function isArrayLike(array) {
+    return array != null && array.length > 0;
 }
 
 /**
@@ -8,7 +11,7 @@ function isAvailable(array) {
  * @param {*} n 
  */
 function first(array, n = 1) {
-    if (isAvailable(array))
+    if (isArrayLike(array))
         if (n === 1)
             return array[0];
         else
@@ -22,7 +25,7 @@ function first(array, n = 1) {
  */
 // consider the case when n > length
 function initial(array, n = 1) {
-    if (isAvailable(array))
+    if (isArrayLike(array))
         return Array.prototype.slice.call(array, 0, Math.max(0, array.length - n));
 }
 
@@ -32,7 +35,7 @@ function initial(array, n = 1) {
  * @param {*} n 
  */
 function last(array, n = 1) {
-    if (isAvailable(array))
+    if (isArrayLike(array))
         if (n === 1)
             return array[array.length - 1];
         else
@@ -45,35 +48,35 @@ function last(array, n = 1) {
  * @param {*} index 
  */
 function rest(array, index = 1) {
-    if (isAvailable(array))
+    if (isArrayLike(array))
         return Array.prototype.slice.call(array, index);
 }
 
+/**
+ * Returns a copy of the array with all falsy values removed. In JavaScript, false, null, 0, "", undefined and NaN are all falsy.
+ * @param {*} array 
+ */
 function compact(array) {
-    if (isAvailable(array)) {
-        return Array.prototype.filter.call(array, function (element) {
-            return Boolean(element);
-        });
+    if (isArrayLike(array)) {
+        return collections.filter(array, Boolean);
     }
 }
 /**
  * Flattens a nested array (the nesting can be to any depth). If you pass shallow, the array will only be flattened a single level.
  * @param {*} array 
- * @param {*} shallow 
  */
 // should not use function property to recursive. 
 // It could be treat as static vars.
 function flatten(array, output) {
-    if (isAvailable(array)) {
+    if (isArrayLike(array)) {
         output = output || [];
-        Array.prototype.forEach.call(array, function (item) {
-            if (Array.isArray(item))
-                flatten(item, output);
-            else
-                output.push(item);
+        collections.each(array, item => {
+            objects.isArray(item) ? flatten(item, output) : output.push(item)
         });
         return output;
     }
+    else 
+        return [];
 }
 
 /**
@@ -82,13 +85,13 @@ function flatten(array, output) {
  * @param {*} values 
  */
 function without(array, ...values) {
-    if (isAvailable(array)) {
-        return Array.prototype.filter.call(array, function (item) {
-            return !values.some(function (items) {
-                return items === item;
-            });
-        });
+    if (isArrayLike(array)) {
+        return collections.filter(array, item => 
+            !collections.some(values, theItem => theItem === item)
+        );
     }
+    else 
+        return [];
 }
 /**
  * Computes the union of the passed-in arrays: the list of unique items, in order, that are present in one or more of the arrays. 
@@ -121,16 +124,6 @@ function intersection(...arrays) {
 function difference(array, others = []) {
     return without(array, ...others);
 }
-
-/**
- * Remain to be done, need some algorithms background to accomplish.
- * uniq_.uniq(array, [isSorted], [iteratee]) Alias: unique 
- * Produces a duplicate-free version of the array, using === to test object equality.
- * In particular only the first occurence of each value is kept. If you know in advance that the array is sorted, 
- * passing true for isSorted will run a much faster algorithm. If you want to compute unique items based on a transformation, 
- * pass an iteratee function.
- */
-
 
 /**
  * Merges together the values of each of the arrays with the values at the corresponding position. 
@@ -173,10 +166,10 @@ function unzip(arrays) {
  */
 function object(list, values) {
     var returnObject = {};
-    if (Array.isArray(list) && Array.isArray(values)) {
-        list.forEach(function (item, index) {
+    if (objects.isArray(list) && objects.isArray(values)) {
+        collections.each(list, (item, index) => {
             returnObject[item] = values[index];
-        });
+        })
     }
     return returnObject;
 }
@@ -207,9 +200,6 @@ function range() {
             start = arguments[0];
             stop = arguments[1];
             step = arguments[2];
-            break;
-        default:
-            return;
             break;
     }
     // abs function deals with the negative condition, to make sure the loop can run correctly.
