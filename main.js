@@ -1,7 +1,3 @@
-const _ = require("./underscore.js");
+const objects = require("./src/objects.js");
 
-var fibonacci = _.memoize(function (n) {
-    return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
-});
-
-fibonacci(8);
+objects.isEqual([5, 10, 8], [5, 7, 8])

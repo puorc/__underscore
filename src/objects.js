@@ -1,3 +1,5 @@
+const collections = require("./collections.js");
+
 /**
  * Retrieve all the names of the object's own enumerable properties.
  * @param {*} object 
@@ -67,7 +69,7 @@ function invert(object) {
 function functions(object) {
     var returnArray = [];
     for (let key in object) {
-        if (typeof object[key] === "function") {
+        if (isFunction(object[key])) {
             returnArray.push(key);
         }
     }
@@ -82,11 +84,9 @@ function functions(object) {
  * @param {*} sources 
  */
 function extend(destination, ...sources) {
-    if (destination === undefined) return null;
-    sources.forEach(function (element) {
-        for (let key in element) {
+    collections.each(sources, element => {
+        for (let key in element)
             destination[key] = element[key];
-        }
     });
     return destination;
 }
@@ -145,23 +145,21 @@ function omit(object, ...keys) {
  * @param {*} defaults 
  */
 function defaults(object, ...defaults) {
-    defaults.forEach(function (item) {
+    collections.each(defaults, function (item) {
         if (isObject(item)) {
             for (let key in item) {
                 if (object[key] === undefined)
                     object[key] = item[key];
             }
         }
-    });
+    })
     return object;
 }
 
 function clone(object) {
-    if (!isObject(object)) return object;
+    if (typeof object !== "object") return object;
     return isArray(object) ? object.slice() : extend({}, object);
 }
-
-// tap(object, interceptor)  remains to be done
 
 /**
  * Returns a function that will itself return the key property of any passed-in object.
@@ -185,7 +183,7 @@ function isEqual(object, other) {
 
 function isEq(a, b) {
     // deal with +0 != -0 case
-    if (a === b) return a !== 0 || 1 / a === 1 / bo;
+    if (a === b) return a !== 0 || 1 / a === 1 / b;
     // a can be null or undefined
     if (a == null || b == null) return false;
     // deal with NaN
@@ -209,11 +207,9 @@ function deepEq(a, b) {
         case '[object Date]':
         case '[object Boolean]':
             return +a === +b;
-        case '[object Symbol]':
-            return Symbol.prototype.valueOf.call(a) === Symbol.prototype.valueOf.call(b);
         case '[object Array]':
             if (a.length !== b.length) return false;
-            for (let i = 0; i < length; i++) {
+            for (let i = 0; i < a.length; i++) {
                 if (!isEq(a[i], b[i])) return false;
             }
             return true;
@@ -245,7 +241,7 @@ function isMatch(object, properties) {
  * @param {*} object 
  */
 function isEmpty(object) {
-    if (object === null) return true;
+    if (typeof object !== "object") return true;
     if (object.length !== undefined)
         return object.length === 0;
     else

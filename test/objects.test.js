@@ -8,12 +8,11 @@ test("objects-keys", () => {
     })).toEqual(["one", "two", "three"]);
 })
 
-function Stooge(name) {
-    this.name = name;
-}
-Stooge.prototype.silly = true;
-
 test("object-allKeys", () => {
+    function Stooge(name) {
+        this.name = name;
+    }
+    Stooge.prototype.silly = true;
     expect(objects.allKeys(new Stooge("Moe"))).toEqual(["name", "silly"]);
 })
 
@@ -50,8 +49,11 @@ test("objects-invert", () => {
 })
 
 test("objects-functions", () => {
-    expect(objects.functions(objects)).toHaveLength(Object.keys(objects).length);
-})
+    expect(objects.functions({
+        a: objects.clone,
+        b: "aa"
+    })).toEqual(['a'])
+});
 
 test("objects-extend", () => {
     expect(objects.extend({
@@ -111,14 +113,14 @@ test("object-pick-func", () => {
     })
 })
 
-var iceCream = {
-    flavor: "chocolate"
-};
 test("defaults-test", () => {
+    var iceCream = {
+        flavor: "chocolate"
+    };
     expect(objects.defaults(iceCream, {
         flavor: "vanilla",
         sprinkles: "lots"
-    })).toEqual({
+    }, 8)).toEqual({
         flavor: "chocolate",
         sprinkles: "lots"
     });
@@ -132,6 +134,14 @@ test("object-clone", () => {
     });
 })
 
+test("object-clone-not-object", () => {
+    expect(objects.clone(5)).toBe(5)
+})
+
+test("object-clone-array", () => {
+    expect(objects.clone([5, 8, 6])).toEqual([5, 8, 6]);
+})
+
 test("test-property", () => {
     var stooge = {
         name: 'moe'
@@ -139,16 +149,74 @@ test("test-property", () => {
     expect(objects.property('name')(stooge)).toBe('moe');
 })
 
-test("object-isEqual", () => {
+test("object-isEqual-object", () => {
     var stooge = {
         name: 'moe',
-        luckyNumbers: [13, 27, 34]
+        luckyNumbers: [13, 27, [5, 8]]
     };
     var clone = {
         name: 'moe',
-        luckyNumbers: [13, 27, 34]
+        luckyNumbers: [13, 27, [5, 8]]
     };
     expect(objects.isEqual(stooge, clone)).toBeTruthy();
+})
+
+test("object-isEqual-zero", () => {
+    expect(objects.isEqual(+0, -0)).toBeFalsy();
+})
+
+test("object-isEqual-null", () => {
+    expect(objects.isEqual(null, undefined)).toBeFalsy();
+})
+
+test("object-isEqual-NaN", () => {
+    expect(objects.isEqual(NaN, NaN)).toBeTruthy();
+})
+
+test("object-isEqual-notEqual", () => {
+    expect(objects.isEqual(5, "c")).toBeFalsy();
+})
+
+test("object-isEqual-StringObject", () => {
+    expect(objects.isEqual(new String("5"), new String("5"))).toBeTruthy();
+})
+
+test("object-isEqual-NumberObject", () => {
+    expect(objects.isEqual(new Number(5), new Number(8))).toBeFalsy();
+})
+
+test("object-isEqual-DateObject", () => {
+    expect(objects.isEqual(new Date, new Date)).toBeTruthy();
+})
+
+test("object-isEqual-notEqualLengthArray", () => {
+    expect(objects.isEqual([5, 6, 8], [4, 2])).toBeFalsy();
+})
+
+test("object-isEqual-BooleanObject", () => {
+    expect(objects.isEqual(new Boolean(true), new Boolean(false))).toBeFalsy();
+})
+
+test("object-isEqual-different-composed-types", () => {
+    expect(objects.isEqual({}, [])).toBeFalsy();
+})
+
+test("object-isEqual-RegExpObject", () => {
+    expect(objects.isEqual(/a/, /a/)).toBeTruthy();
+})
+
+test("object-isEqual-differentArray", () => {
+    expect(objects.isEqual([5, 10, 8], [5, 7, 8])).toBeFalsy();
+})
+
+test("object-isEqual-differentObj", () => {
+    expect(objects.isEqual({
+        a: "c",
+        b: "c"
+    }, {
+        a: "c",
+        d: "c"
+    })).toBeFalsy();
 })
 
 test("object-isMatch", () => {
@@ -161,8 +229,22 @@ test("object-isMatch", () => {
     })).toBeTruthy();
 })
 
+test("object-isMatch-not", () => {
+    var stooge = {
+        name: 'moe',
+        age: 32
+    };
+    expect(objects.isMatch(stooge, {
+        cb: 32
+    })).toBeFalsy();
+})
+
 test("object-isEmpty-arraylike", () => {
     expect(objects.isEmpty([1, 2, 3])).toBeFalsy();
+})
+
+test("object-isEmpty-abnormal", () => {
+    expect(objects.isEmpty(8)).toBeTruthy();
 })
 
 test("object-isEmpty-object", () => {
@@ -170,11 +252,13 @@ test("object-isEmpty-object", () => {
 })
 
 test("object-isArray-argument", () => {
-    expect((function(){ return objects.isArray(arguments); })()).toBeFalsy();
+    expect((function () {
+        return objects.isArray(arguments);
+    })()).toBeFalsy();
 })
 
 test("object-isArray-array", () => {
-    expect(objects.isArray([1,2,3])).toBeTruthy();
+    expect(objects.isArray([1, 2, 3])).toBeTruthy();
 })
 
 test("object-isFunction", () => {
