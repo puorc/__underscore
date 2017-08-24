@@ -1,6 +1,34 @@
 const utility = require("./utility.js");
 const objects = require("./objects.js");
-const functions = require("./functions.js")
+const functions = require("./functions.js");
+
+
+/**
+ * Returns true if object is an Array.
+ * @param {*} object 
+ */
+function isArray(object) {
+    return Array.isArray(object) || object instanceof Array;
+}
+
+/**
+ * Returns true if object is a Function.
+ * @param {*} object 
+ */
+function isFunction(object) {
+    return typeof object === "function";
+}
+
+/**
+ * Returns true if value is an Object. 
+ * Note that JavaScript arrays and functions are objects, 
+ * while (normal) strings and numbers are not.
+ * @param {*} value 
+ */
+function isObject(value) {
+    return typeof value === "object" && !isArray(value) && !isFunction(value);
+}
+
 /**
  * Iterates over a list of elements, yielding each in turn to an iteratee function. The iteratee is bound to the context object, if one is passed.
  * Each invocation of iteratee is called with three arguments: (element, index, list). If list is a JavaScript object, iteratee's arguments will be (value, key, list). 
@@ -14,12 +42,12 @@ function each(list, iteratee, context) {
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
-    if (objects.isObject(list)) {
+    if (isObject(list)) {
         for (let key in list) {
             bindedIteratee(list[key], key, list);
         }
     }
-    if (objects.isArray(list)) {
+    if (isArray(list)) {
         for (let i = 0; i < list.length; i++) {
             bindedIteratee(list[i], i, list);
         }
@@ -39,12 +67,12 @@ function map(list, iteratee, context) {
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
-    if (objects.isArray(list)) {
+    if (isArray(list)) {
         for (let i = 0; i < list.length; i++) {
             returnArray.push(bindedIteratee(list[i], i, list));
         }
     }
-    if (objects.isObject(list)) {
+    if (isObject(list)) {
         for (let key in list) {
             returnArray.push(bindedIteratee(list[key], key, list));
         }
@@ -65,15 +93,21 @@ function map(list, iteratee, context) {
  */
 function reduce(list, iteratee, memo, context) {
     var bindedIteratee = iteratee,
-        result, theMemo = memo;
+        keys = !isArray(list) && objects.keys(list),
+        length = (keys || list).length,
+        index = 0;
     if (context !== undefined) {
         bindedIteratee = iteratee.bind(context);
     }
-    for (let i = 0; i < list.length; i++) {
-        if (theMemo !== undefined) {
-
-        }
+    if (memo === undefined) {
+        memo = list[keys ? keys[index] : index];
+        index++;
     }
+    for (; index < length; index++) {
+        let currentKey = keys ? keys[index] : index;
+        memo = bindedIteratee(memo, list[currentKey], currentKey, list);
+    }
+    return memo;
 }
 
 /**
@@ -88,7 +122,7 @@ function filter(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    each(list, function (value, index, list) {
+    each(list, function(value, index, list) {
         if (bindedIteratee(value, index, list))
             result.push(value);
     });
@@ -107,13 +141,13 @@ function every(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    if (objects.isArray(list)) {
+    if (isArray(list)) {
         for (let i = 0; i < list.length; i++) {
             if (!bindedIteratee(list[i], i, list))
                 return false;
         }
     }
-    if (objects.isObject(list)) {
+    if (isObject(list)) {
         for (let key in list) {
             if (!bindedIteratee(list[key], key, list)) {
                 return false;
@@ -135,13 +169,13 @@ function some(list, predicate, context) {
     if (context !== undefined) {
         bindedIteratee = predicate.bind(context);
     }
-    if (objects.isArray(list)) {
+    if (isArray(list)) {
         for (let i = 0; i < list.length; i++) {
             if (bindedIteratee(list[i], i, list))
                 return true;
         }
     }
-    if (objects.isObject(list)) {
+    if (isObject(list)) {
         for (let key in list) {
             if (bindedIteratee(list[key], key, list)) {
                 return true;
@@ -157,15 +191,13 @@ function some(list, predicate, context) {
  * @param {*} propertyName 
  */
 function pluck(list, propertyName) {
-    return map(list, function (item) {
-        if (propertyName in item) {
-            return item[propertyName];
-        }
-        else {
-            return void 0;
-        }
+    var resultArray = [];
+    each(list, item => {
+        if (propertyName in item) resultArray.push(item[propertyName]);
     });
+    return resultArray;
 }
+
 /**
  * Returns the maximum value in list. If an iteratee function is provided, 
  * it will be used on each value to generate the criterion by which the value is ranked.
@@ -174,27 +206,14 @@ function pluck(list, propertyName) {
  * @param {*} context 
  */
 function max(list, iteratee, context) {
-    var bindedIteratee = iteratee,
-        max, maxObj;
-    if (context !== undefined) {
-        bindedIteratee = iteratee.bind(context);
-    }
-    if (objects.isArray(list)) {
-        let isFirstTime = true;
-        for (let i = 0; i < list.length; i++) {
-            if (typeof bindedIteratee(list[i], i, list) === "number") {
-                if (isFirstTime) {
-                    max = bindedIteratee(list[i], i, list);
-                    maxObj = list[i];
-                    isFirstTime = false;
-                }
-                if (bindedIteratee(list[i], i, list) > max) {
-                    max = bindedIteratee(list[i], i, list);
-                    maxObj = list[i];
-                }
-            }
+    var maxValue = -Infinity,
+        maxObj;
+    each(list, function(item, key, list) {
+        if (iteratee(item) > maxValue) {
+            maxValue = iteratee(item);
+            maxObj = item;
         }
-    }
+    }, context);
     return maxObj;
 }
 
@@ -204,19 +223,39 @@ function max(list, iteratee, context) {
  * @param {*} list 
  * @param {*} n 
  */
-// has been tested manually
-function sample(list, n) {
-    if (determineType(list) === TYPE.array_like) {
-        if (n === undefined) {
-            return list[utility.random(list.length - 1)];
-        } else {
-            let result = [];
-            for (let i = 0; i < n; i++) {
-                result.push(utility.random(list.length - 1));
-            }
-            return result;
+function sample(list, n = 1) {
+    var theList = [],
+        returnArray = [];
+    if (isArray(list))
+        theList = list;
+    else if (isObject(list))
+        theList = objects.values(list);
+    else
+        return;
+    if (n === 1)
+        return theList[utility.random(theList.length - 1)];
+    else {
+        for (let i = 0; i < n; i++) {
+            returnArray.push(theList[utility.random(theList.length - 1)]);
         }
+        return returnArray;
     }
+}
+
+/**
+ * Returns true if the value is present in the list.
+ * @param {*} list 
+ * @param {*} value 
+ */
+function contains(list, value) {
+    var theList = [];
+    if (isObject(list))
+        theList = objects.values(list);
+    else if (isArray(list))
+        theList = list;
+    else
+        return false;
+    return some(list, item => item === value);
 }
 
 /**
@@ -233,7 +272,6 @@ function toArray(list) {
  * @param {*} list 
  */
 function size(list) {
-    if (list == null) return 0;
     if (objects.isArray(list)) return list.length;
     if (objects.isObject(list)) return Object.keys(list).length;
     return 0;
@@ -245,7 +283,7 @@ function size(list) {
  * @param {*} predicate 
  */
 function partition(array, predicate) {
-    if (!array instanceof Array) return [];
+    if (!(array instanceof Array)) return [];
     var rightResult = [],
         otherResult = [],
         result = [];
@@ -267,5 +305,7 @@ module.exports = {
     sample,
     toArray,
     size,
-    partition
+    partition,
+    contains,
+    reduce
 }
