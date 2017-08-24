@@ -82,7 +82,7 @@ test("object-pick-func", () => {
         name: 'moe',
         age: 50,
         userid: 'moe1'
-    }, function (value, key, object) {
+    }, function(value, key, object) {
         return typeof value === "number";
     })).toEqual({
         age: 50
@@ -105,7 +105,7 @@ test("object-pick-func", () => {
         name: 'moe',
         age: 50,
         userid: 'moe1'
-    }, function (value, key, object) {
+    }, function(value, key, object) {
         return typeof value === "number";
     })).toEqual({
         name: 'moe',
@@ -252,7 +252,7 @@ test("object-isEmpty-object", () => {
 })
 
 test("object-isArray-argument", () => {
-    expect((function () {
+    expect((function() {
         return objects.isArray(arguments);
     })()).toBeFalsy();
 })

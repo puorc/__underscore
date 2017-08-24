@@ -1,7 +1,7 @@
 const functions = require("../src/functions.js");
 
 test("func-bind", () => {
-    var func = function (greeting) {
+    var func = function(greeting) {
         return greeting + ': ' + this.name
     };
     func = functions.bind(func, {
@@ -11,7 +11,7 @@ test("func-bind", () => {
 })
 
 test("func-partial", () => {
-    var subtract = function (a, b) {
+    var subtract = function(a, b) {
         return b - a;
     };
     var sub5 = functions.partial(subtract, 5);
@@ -54,7 +54,7 @@ test("func-before", () => {
                 constant.num++;
             return constant.num;
         },
-    beforeFunc = functions.before(2, func);
+        beforeFunc = functions.before(2, func);
     expect(beforeFunc()).toBe(0);
     expect(beforeFunc()).toBe(1);
     expect(beforeFunc()).toBe(1);
@@ -62,14 +62,14 @@ test("func-before", () => {
 })
 
 test("func-memoize", () => {
-    var fibonacci = functions.memoize(function (n) {
+    var fibonacci = functions.memoize(function(n) {
         return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
     });
     expect(fibonacci(3)).toBe(2);
 })
 
 test("func-memoize-hash", () => {
-    var fibonacci = functions.memoize(function (n) {
+    var fibonacci = functions.memoize(function(n) {
         return n < 2 ? n : fibonacci(n - 1) + fibonacci(n - 2);
     }, key => key);
     expect(fibonacci(3)).toBe(2);
@@ -96,10 +96,10 @@ test("func-defer", done => {
 })
 
 test("func-compose", () => {
-    var greet = function (name) {
+    var greet = function(name) {
         return "hi: " + name;
     };
-    var exclaim = function (statement) {
+    var exclaim = function(statement) {
         return statement.toUpperCase() + "!";
     };
     var welcome = functions.compose(exclaim, greet);

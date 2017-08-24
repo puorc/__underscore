@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1503594002814" clover="3.2.0">
-  <project timestamp="1503594002814" name="All files">
+<coverage generated="1503598779984" clover="3.2.0">
+  <project timestamp="1503598779985" name="All files">
     <metrics statements="343" coveredstatements="343" conditionals="215" coveredconditionals="215" methods="99" coveredmethods="99" elements="657" coveredelements="657" complexity="0" loc="343" ncloc="343" packages="1" files="5" classes="5">
       <file name="array.js" path="W:\Downloads\__underscore\src\array.js">
         <metrics statements="73" coveredstatements="73" conditionals="46" coveredconditionals="46" methods="25" coveredmethods="25"/>
@@ -144,11 +144,11 @@
         <line num="170" count="2" type="stmt"/>
         <line num="172" count="42" type="cond" truecount="2" falsecount="0"/>
         <line num="173" count="35" type="stmt"/>
-        <line num="174" count="55" type="cond" truecount="2" falsecount="0"/>
+        <line num="174" count="56" type="cond" truecount="2" falsecount="0"/>
         <line num="175" count="16" type="stmt"/>
         <line num="178" count="26" type="cond" truecount="2" falsecount="0"/>
         <line num="179" count="7" type="stmt"/>
-        <line num="180" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="180" count="14" type="cond" truecount="2" falsecount="0"/>
         <line num="181" count="6" type="stmt"/>
         <line num="185" count="20" type="stmt"/>
         <line num="194" count="1" type="stmt"/>
