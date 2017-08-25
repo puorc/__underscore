@@ -18,9 +18,8 @@
     "license": "MIT",
     "scripts": {
         "test": "jest",
-        "lint": "eslint src/*.js test/*.js",
-        "compile": "babel src --out-file __underscore.js",
-        "minify": "uglifyjs __underscore.js -c -m -o __underscore.min.js --source-map"
+        "compile": "babel __underscore.js --out-file __underscore-es5.js",
+        "minify": "uglifyjs __underscore-es5.js -c -m -o __underscore.min.js --source-map"
     },
     "dependencies": {
         "jest": "^20.0.4",
@@ -32,11 +31,6 @@
     },
     "devDependencies": {
         "babel-cli": "^6.24.1",
-        "babel-preset-env": "^1.6.0",
-        "eslint-config-standard": "^10.2.1",
-        "eslint-plugin-import": "^2.7.0",
-        "eslint-plugin-node": "^5.1.1",
-        "eslint-plugin-promise": "^3.5.0",
-        "eslint-plugin-standard": "^3.0.1"
+        "babel-preset-env": "^1.6.0"
     }
 }

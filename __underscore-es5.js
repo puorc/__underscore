@@ -1,17 +1,21 @@
-(function() {
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+(function () {
 
     // Establish the root object, `window` (`self`) in the browser, `global`
     // on the server, or `this` in some virtual machines. We use `self`
     // instead of `window` for `WebWorker` support.
-    var root = typeof self == 'object' && self.self === self && self ||
-        typeof global == 'object' && global.global === global && global ||
-        this || {};
+    var root = (typeof self === 'undefined' ? 'undefined' : _typeof(self)) == 'object' && self.self === self && self || (typeof global === 'undefined' ? 'undefined' : _typeof(global)) == 'object' && global.global === global && global || this || {};
 
     // Save the previous value of the `_` variable.
     var previousUnderscore = root._;
 
     // Create a safe reference to the Underscore object for use below.
-    var _ = function(obj) {
+    var _ = function _(obj) {
         if (obj instanceof _) return obj;
         if (!(this instanceof _)) return new _(obj);
         this._wrapped = obj;
@@ -35,20 +39,18 @@
 
     _.isArrayLike = function isArrayLike(array) {
         return array != null && array.length > 0;
-    }
+    };
 
     /**
      * Returns the first element of an array. Passing n will return the first n elements of the array.
      * @param {*} array 
      * @param {*} n 
      */
-    _.first = function first(array, n = 1) {
-        if (_.isArrayLike(array))
-            if (n === 1)
-                return array[0];
-            else
-                return _.initial(array, array.length - n);
-    }
+    _.first = function first(array) {
+        var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        if (_.isArrayLike(array)) if (n === 1) return array[0];else return _.initial(array, array.length - n);
+    };
 
     /**
      * Returns everything but the last entry of the array. Especially useful on the arguments object. Pass n to exclude the last n elements from the result.
@@ -56,129 +58,187 @@
      * @param {*} n 
      */
     // consider the case when n > length
-    _.initial = function initial(array, n = 1) {
-        if (_.isArrayLike(array))
-            return Array.prototype.slice.call(array, 0, Math.max(0, array.length - n));
-    }
+    _.initial = function initial(array) {
+        var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        if (_.isArrayLike(array)) return Array.prototype.slice.call(array, 0, Math.max(0, array.length - n));
+    };
 
     /**
      * Returns the last element of an array. Passing n will return the last n elements of the array.
      * @param {*} array 
      * @param {*} n 
      */
-    _.last = function last(array, n = 1) {
-        if (_.isArrayLike(array))
-            if (n === 1)
-                return array[array.length - 1];
-            else
-                return _.rest(array, Math.max(0, array.length - n));
-    }
+    _.last = function last(array) {
+        var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        if (_.isArrayLike(array)) if (n === 1) return array[array.length - 1];else return _.rest(array, Math.max(0, array.length - n));
+    };
 
     /**
      * Returns the rest of the elements in an array. Pass an index to return the values of the array from that index onward.
      * @param {*} array 
      * @param {*} index 
      */
-    _.rest = function rest(array, index = 1) {
-        if (_.isArrayLike(array))
-            return Array.prototype.slice.call(array, index);
-    }
+    _.rest = function rest(array) {
+        var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        if (_.isArrayLike(array)) return Array.prototype.slice.call(array, index);
+    };
 
     /**
      * Returns a copy of the array with all falsy values removed. In JavaScript, false, null, 0, "", undefined and NaN are all falsy.
      * @param {*} array 
      */
     _.compact = function compact(array) {
-            if (_.isArrayLike(array)) {
-                return _.filter(array, Boolean);
-            }
+        if (_.isArrayLike(array)) {
+            return _.filter(array, Boolean);
         }
-        /**
-         * Flattens a nested array (the nesting can be to any depth). If you pass shallow, the array will only be flattened a single level.
-         * @param {*} array 
-         */
-        // should not use function property to recursive. 
-        // It could be treat as static vars.
+    };
+    /**
+     * Flattens a nested array (the nesting can be to any depth). If you pass shallow, the array will only be flattened a single level.
+     * @param {*} array 
+     */
+    // should not use function property to recursive. 
+    // It could be treat as static vars.
     _.flatten = function flatten(array, output) {
         if (_.isArrayLike(array)) {
             output = output || [];
-            _.each(array, item => {
-                _.isArray(item) ? flatten(item, output) : output.push(item)
+            _.each(array, function (item) {
+                _.isArray(item) ? flatten(item, output) : output.push(item);
             });
             return output;
-        } else
-            return [];
-    }
+        } else return [];
+    };
 
     /**
      * Returns a copy of the array with all instances of the values removed.
      * @param {*} array 
      * @param {*} values 
      */
-    _.without = function without(array, ...values) {
-            if (_.isArrayLike(array)) {
-                return _.filter(array, item =>
-                    !_.some(values, theItem => theItem === item)
-                );
-            } else
-                return [];
+    _.without = function without(array) {
+        for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            values[_key - 1] = arguments[_key];
         }
-        /**
-         * Computes the union of the passed-in arrays: the list of unique items, in order, that are present in one or more of the arrays. 
-         * @param {*} arrays 
-         */
-    _.union = function union(...arrays) {
-            const s = new Set();
-            arrays.forEach(array => array.forEach(item => s.add(item)));
-            return Array.from(s);
+
+        if (_.isArrayLike(array)) {
+            return _.filter(array, function (item) {
+                return !_.some(values, function (theItem) {
+                    return theItem === item;
+                });
+            });
+        } else return [];
+    };
+    /**
+     * Computes the union of the passed-in arrays: the list of unique items, in order, that are present in one or more of the arrays. 
+     * @param {*} arrays 
+     */
+    _.union = function union() {
+        var s = new Set();
+
+        for (var _len2 = arguments.length, arrays = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            arrays[_key2] = arguments[_key2];
         }
-        /**
-         * Computes the list of values that are the intersection of all the arrays. Each value in the result is present in each of the arrays.
-         * @param {*} arrays 
-         */
-    _.intersection = function intersection(...arrays) {
-        var contains = (array, item) => array.some(element => element === item),
+
+        arrays.forEach(function (array) {
+            return array.forEach(function (item) {
+                return s.add(item);
+            });
+        });
+        return Array.from(s);
+    };
+    /**
+     * Computes the list of values that are the intersection of all the arrays. Each value in the result is present in each of the arrays.
+     * @param {*} arrays 
+     */
+    _.intersection = function intersection() {
+        var contains = function contains(array, item) {
+            return array.some(function (element) {
+                return element === item;
+            });
+        },
             result = [];
-        for (let element of arrays[0]) {
-            if (contains(result, element)) continue;
-            if (arrays.every(array => contains(array, element))) result.push(element);
+
+        for (var _len3 = arguments.length, arrays = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+            arrays[_key3] = arguments[_key3];
         }
+
+        var _loop = function _loop(element) {
+            if (contains(result, element)) return 'continue';
+            if (arrays.every(function (array) {
+                return contains(array, element);
+            })) result.push(element);
+        };
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+            for (var _iterator = arrays[0][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var element = _step.value;
+
+                var _ret = _loop(element);
+
+                if (_ret === 'continue') continue;
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
+                }
+            } finally {
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+
         return result;
-    }
+    };
 
     /**
      * Similar to without, but returns the values from array that are not present in the other arrays.
      * @param {*} array 
      * @param {*} others 
      */
-    _.difference = function difference(array, others = []) {
-        return _.without(array, ...others);
-    }
+    _.difference = function difference(array) {
+        var others = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+        return _.without.apply(_, [array].concat(_toConsumableArray(others)));
+    };
 
     /**
      * Merges together the values of each of the arrays with the values at the corresponding position. 
      * Useful when you have separate data sources that are coordinated through matching array indexes.
      * @param {*} arrays 
      */
-    _.zip = function zip(...arrays) {
+    _.zip = function zip() {
+        for (var _len4 = arguments.length, arrays = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+            arrays[_key4] = arguments[_key4];
+        }
+
         var result = [];
         if (arrays.length === 0) return null;
         if (arrays.length === 1) return arrays[0];
-        if (!arrays.every(function(item) {
-                return item.length === arrays[0].length;
-            })) {
+        if (!arrays.every(function (item) {
+            return item.length === arrays[0].length;
+        })) {
             return null;
         } else {
-            for (let i = 0; i < arrays[0].length; i++) {
-                let tmpArray = [];
-                for (let j = 0; j < arrays.length; j++) {
+            for (var i = 0; i < arrays[0].length; i++) {
+                var tmpArray = [];
+                for (var j = 0; j < arrays.length; j++) {
                     tmpArray.push(arrays[j][i]);
                 }
                 result.push(tmpArray);
             }
         }
         return result;
-    }
+    };
 
     /**
      * The opposite of zip. Given an array of arrays, returns a series of new arrays, 
@@ -186,24 +246,23 @@
      * @param {*} array 
      */
     _.unzip = function unzip(arrays) {
-            return _.zip(...arrays);
-        }
-        /**
-         * Converts arrays into objects. 
-         * Pass either a single list of [key, value] pairs, or a list of keys, and a list of values. If duplicate keys exist, the last value wins.
-         * @param {*} list 
-         * @param {*} values 
-         */
+        return _.zip.apply(_, _toConsumableArray(arrays));
+    };
+    /**
+     * Converts arrays into objects. 
+     * Pass either a single list of [key, value] pairs, or a list of keys, and a list of values. If duplicate keys exist, the last value wins.
+     * @param {*} list 
+     * @param {*} values 
+     */
     _.object = function object(list, values) {
         var returnObject = {};
         if (_.isArray(list) && _.isArray(values)) {
-            _.each(list, (item, index) => {
+            _.each(list, function (item, index) {
                 returnObject[item] = values[index];
-            })
+            });
         }
         return returnObject;
-    }
-
+    };
 
     /**
      * A function to create flexibly-numbered lists of integers, handy for each and map loops. start, if omitted, defaults to 0; step defaults to 1. 
@@ -233,11 +292,11 @@
                 break;
         }
         // abs function deals with the negative condition, to make sure the loop can run correctly.
-        for (let i = start; Math.abs(i) < Math.abs(stop); i += step) {
+        for (var i = start; Math.abs(i) < Math.abs(stop); i += step) {
             resultArray.push(i);
         }
         return resultArray;
-    }
+    };
 
     /**
      * Returns true if object is a Function.
@@ -245,7 +304,7 @@
      */
     _.isFunction = function isFunction(object) {
         return typeof object === "function";
-    }
+    };
 
     /**
      * Iterates over a list of elements, yielding each in turn to an iteratee function. The iteratee is bound to the context object, if one is passed.
@@ -261,16 +320,16 @@
             bindedIteratee = iteratee.bind(context);
         }
         if (_.isObject(list)) {
-            for (let key in list) {
+            for (var key in list) {
                 bindedIteratee(list[key], key, list);
             }
         }
         if (_.isArray(list)) {
-            for (let i = 0; i < list.length; i++) {
+            for (var i = 0; i < list.length; i++) {
                 bindedIteratee(list[i], i, list);
             }
         }
-    }
+    };
 
     /**
      * Produces a new array of values by mapping each value in list through a transformation function (iteratee). 
@@ -286,17 +345,17 @@
             bindedIteratee = iteratee.bind(context);
         }
         if (_.isArray(list)) {
-            for (let i = 0; i < list.length; i++) {
+            for (var i = 0; i < list.length; i++) {
                 returnArray.push(bindedIteratee(list[i], i, list));
             }
         }
         if (_.isObject(list)) {
-            for (let key in list) {
+            for (var key in list) {
                 returnArray.push(bindedIteratee(list[key], key, list));
             }
         }
         return returnArray;
-    }
+    };
 
     /**
      * Also known as inject and foldl, reduce boils down a list of values into a single value. 
@@ -322,11 +381,11 @@
             index++;
         }
         for (; index < length; index++) {
-            let currentKey = keys ? keys[index] : index;
+            var currentKey = keys ? keys[index] : index;
             memo = bindedIteratee(memo, list[currentKey], currentKey, list);
         }
         return memo;
-    }
+    };
 
     /**
      * Looks through each value in the list, returning an array of all the values that pass a truth test (predicate).
@@ -340,12 +399,11 @@
         if (context !== undefined) {
             bindedIteratee = predicate.bind(context);
         }
-        _.each(list, function(value, index, list) {
-            if (bindedIteratee(value, index, list))
-                result.push(value);
+        _.each(list, function (value, index, list) {
+            if (bindedIteratee(value, index, list)) result.push(value);
         });
         return result;
-    }
+    };
 
     /**
      * Returns true if all of the values in the list pass the predicate truth test.
@@ -360,20 +418,19 @@
             bindedIteratee = predicate.bind(context);
         }
         if (_.isArray(list)) {
-            for (let i = 0; i < list.length; i++) {
-                if (!bindedIteratee(list[i], i, list))
-                    return false;
+            for (var i = 0; i < list.length; i++) {
+                if (!bindedIteratee(list[i], i, list)) return false;
             }
         }
         if (_.isObject(list)) {
-            for (let key in list) {
+            for (var key in list) {
                 if (!bindedIteratee(list[key], key, list)) {
                     return false;
                 }
             }
         }
         return true;
-    }
+    };
 
     /**
      * Returns true if any of the values in the list pass the predicate truth test. 
@@ -388,20 +445,19 @@
             bindedIteratee = predicate.bind(context);
         }
         if (_.isArray(list)) {
-            for (let i = 0; i < list.length; i++) {
-                if (bindedIteratee(list[i], i, list))
-                    return true;
+            for (var i = 0; i < list.length; i++) {
+                if (bindedIteratee(list[i], i, list)) return true;
             }
         }
         if (_.isObject(list)) {
-            for (let key in list) {
+            for (var key in list) {
                 if (bindedIteratee(list[key], key, list)) {
                     return true;
                 }
             }
         }
         return false;
-    }
+    };
 
     /**
      * A convenient version of what is perhaps the most common use-case for map: extracting a list of property values.
@@ -410,11 +466,11 @@
      */
     _.pluck = function pluck(list, propertyName) {
         var resultArray = [];
-        _.each(list, item => {
+        _.each(list, function (item) {
             if (propertyName in item) resultArray.push(item[propertyName]);
         });
         return resultArray;
-    }
+    };
 
     /**
      * Returns the maximum value in list. If an iteratee function is provided, 
@@ -426,14 +482,14 @@
     _.max = function max(list, iteratee, context) {
         var maxValue = -Infinity,
             maxObj;
-        _.each(list, function(item, key, list) {
+        _.each(list, function (item, key, list) {
             if (iteratee(item) > maxValue) {
                 maxValue = iteratee(item);
                 maxObj = item;
             }
         }, context);
         return maxObj;
-    }
+    };
 
     /**
      * Produce a random sample from the list. Pass a number to return n random elements from the list. 
@@ -441,24 +497,19 @@
      * @param {*} list 
      * @param {*} n 
      */
-    _.sample = function sample(list, n = 1) {
+    _.sample = function sample(list) {
+        var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
         var theList = [],
             returnArray = [];
-        if (_.isArray(list))
-            theList = list;
-        else if (_.isObject(list))
-            theList = _.values(list);
-        else
-            return;
-        if (n === 1)
-            return theList[_.random(theList.length - 1)];
-        else {
-            for (let i = 0; i < n; i++) {
+        if (_.isArray(list)) theList = list;else if (_.isObject(list)) theList = _.values(list);else return;
+        if (n === 1) return theList[_.random(theList.length - 1)];else {
+            for (var i = 0; i < n; i++) {
                 returnArray.push(theList[_.random(theList.length - 1)]);
             }
             return returnArray;
         }
-    }
+    };
 
     /**
      * Returns true if the value is present in the list.
@@ -467,14 +518,11 @@
      */
     _.contains = function contains(list, value) {
         var theList = [];
-        if (_.isObject(list))
-            theList = _.values(list);
-        else if (_.isArray(list))
-            theList = list;
-        else
-            return false;
-        return _.some(list, item => item === value);
-    }
+        if (_.isObject(list)) theList = _.values(list);else if (_.isArray(list)) theList = list;else return false;
+        return _.some(list, function (item) {
+            return item === value;
+        });
+    };
 
     /**
      * Creates a real Array from the list (anything that can be iterated over). 
@@ -483,7 +531,7 @@
      */
     _.toArray = function toArray(list) {
         return Array.prototype.slice.call(list);
-    }
+    };
 
     /**
      * Return the number of values in the list.
@@ -493,7 +541,7 @@
         if (_.isArray(list)) return list.length;
         if (_.isObject(list)) return Object.keys(list).length;
         return 0;
-    }
+    };
 
     /**
      * Split array into two arrays: one whose elements all satisfy predicate and one whose elements all do not satisfy predicate.
@@ -505,13 +553,13 @@
         var rightResult = [],
             otherResult = [],
             result = [];
-        for (let i = 0; i < array.length; i++) {
+        for (var i = 0; i < array.length; i++) {
             predicate(array[i]) ? rightResult.push(array[i]) : otherResult.push(array[i]);
         }
         result.push(rightResult);
         result.push(otherResult);
         return result;
-    }
+    };
 
     /**
      * Bind a function to an object, meaning that whenever the function is called, the value of this will be the object. 
@@ -520,20 +568,28 @@
      * @param {*} object 
      * @param {*} args 
      */
-    _.bind = function bind(func, object, ...args) {
-        return function(calledArgs) {
-            return func.apply(object, args.concat(calledArgs));
+    _.bind = function bind(func, object) {
+        for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+            args[_key5 - 2] = arguments[_key5];
         }
-    }
+
+        return function (calledArgs) {
+            return func.apply(object, args.concat(calledArgs));
+        };
+    };
 
     /**
      * Partially apply a function by filling in any number of its arguments, without changing its dynamic this value.
      * @param {*} func 
      * @param {*} args 
      */
-    _.partial = function partial(func, ...args) {
-        return _.bind(func, this, ...args);
-    }
+    _.partial = function partial(func) {
+        for (var _len6 = arguments.length, args = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+            args[_key6 - 1] = arguments[_key6];
+        }
+
+        return _.bind.apply(_, [func, this].concat(args));
+    };
 
     /**
      * Memoizes a given function by caching the computed result. Useful for speeding up slow-running computations. 
@@ -541,7 +597,7 @@
      * @param {*} hash 
      */
     _.memoize = function memoize(func, hash) {
-        var memoize = function(key) {
+        var memoize = function memoize(key) {
             var cache = memoize.cache;
             var addr = '' + (hash ? hash.apply(this, arguments) : key);
             if (!(addr in cache)) cache[addr] = func.apply(this, arguments);
@@ -549,7 +605,7 @@
         };
         memoize.cache = {};
         return memoize;
-    }
+    };
 
     /**
      * Much like setTimeout, invokes function after wait milliseconds. 
@@ -558,9 +614,13 @@
      * @param {*} wait 
      * @param {*} args 
      */
-    _.delay = function delay(func, wait, ...args) {
-        return setTimeout(func, wait, ...args);
-    }
+    _.delay = function delay(func, wait) {
+        for (var _len7 = arguments.length, args = Array(_len7 > 2 ? _len7 - 2 : 0), _key7 = 2; _key7 < _len7; _key7++) {
+            args[_key7 - 2] = arguments[_key7];
+        }
+
+        return setTimeout.apply(undefined, [func, wait].concat(args));
+    };
 
     /**
      * Defers invoking the function until the current call stack has cleared, 
@@ -568,9 +628,13 @@
      * @param {*} func 
      * @param {*} args 
      */
-    _.defer = function defer(func, ...args) {
-        return setTimeout(func, 0, ...args);
-    }
+    _.defer = function defer(func) {
+        for (var _len8 = arguments.length, args = Array(_len8 > 1 ? _len8 - 1 : 0), _key8 = 1; _key8 < _len8; _key8++) {
+            args[_key8 - 1] = arguments[_key8];
+        }
+
+        return setTimeout.apply(undefined, [func, 0].concat(args));
+    };
 
     /**
      * Creates a version of the function that can only be called one time. Repeated calls to the modified function will have no effect, 
@@ -581,16 +645,16 @@
     _.once = function once(func) {
         var isRun = false,
             result;
-        return function() {
+        return function () {
             if (!isRun) {
-                result = func(...arguments);
+                result = func.apply(undefined, arguments);
                 isRun = true;
                 return result;
             } else {
                 return result;
             }
         };
-    }
+    };
 
     /**
      * Creates a version of the function that will only be run after being called count times. 
@@ -599,12 +663,12 @@
      * @param {*} func 
      */
     _.after = function after(count, func) {
-        return function() {
+        return function () {
             if (count-- < 1) {
-                return func(...Array.prototype.slice(arguments));
+                return func.apply(undefined, _toConsumableArray(Array.prototype.slice(arguments)));
             }
-        }
-    }
+        };
+    };
 
     /**
      * Creates a version of the function that can be called no more than count times. 
@@ -614,33 +678,37 @@
      */
     _.before = function before(count, func) {
         var memo;
-        return function() {
+        return function () {
             if (count-- > 0) {
                 memo = func.apply(this, arguments);
             }
             return memo;
         };
-    }
+    };
 
     /**
      * Returns a new negated version of the predicate function.
      * @param {*} predicate 
      */
     _.negate = function negate(predicate) {
-        return function() {
+        return function () {
             return !predicate.apply(this, arguments);
-        }
-    }
+        };
+    };
 
-    _.compose = function compose(...funcs) {
-        return function() {
+    _.compose = function compose() {
+        for (var _len9 = arguments.length, funcs = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+            funcs[_key9] = arguments[_key9];
+        }
+
+        return function () {
             var tmp = funcs[0].apply(this, arguments);
-            for (let i = 1; i < funcs.length; i++) {
+            for (var i = 1; i < funcs.length; i++) {
                 tmp = funcs[i].call(this, tmp);
             }
             return tmp;
-        }
-    }
+        };
+    };
 
     /**
      * Retrieve all the names of the object's own enumerable properties.
@@ -648,7 +716,7 @@
      */
     _.keys = function keys(object) {
         return Object.keys(object);
-    }
+    };
 
     /**
      * Retrieve all the names of object's own and inherited properties.
@@ -657,13 +725,13 @@
     _.allKeys = function allKeys(object) {
         var result = [],
             theObject = object;
-        result.push(...Object.keys(object));
+        result.push.apply(result, _toConsumableArray(Object.keys(object)));
         while (Object.getPrototypeOf(theObject) !== null) {
-            result.push(...Object.keys(Object.getPrototypeOf(theObject)));
+            result.push.apply(result, _toConsumableArray(Object.keys(Object.getPrototypeOf(theObject))));
             theObject = Object.getPrototypeOf(theObject);
         }
         return result;
-    }
+    };
 
     /**
      * Return all of the values of the object's own properties.
@@ -671,10 +739,10 @@
      */
     _.values = function values(object) {
         var result = [];
-        for (let key in object)
+        for (var key in object) {
             result.push(object[key]);
-        return result;
-    }
+        }return result;
+    };
 
     /**
      * Convert an object into a list of [key, value] pairs.
@@ -682,13 +750,13 @@
      */
     _.pairs = function pairs(object) {
         var result = [];
-        for (let key in object) {
-            let tmpArray = [];
+        for (var key in object) {
+            var tmpArray = [];
             tmpArray.push(key, object[key]);
             result.push(tmpArray);
         }
         return result;
-    }
+    };
 
     /**
      * Returns a copy of the object where the keys have become the values and the values the keys. 
@@ -697,11 +765,11 @@
      */
     _.invert = function invert(object) {
         var returnObject = {};
-        for (let key in object) {
+        for (var key in object) {
             returnObject[object[key]] = key;
         }
         return returnObject;
-    }
+    };
 
     /**
      * Returns a sorted list of the names of every method in an object — 
@@ -710,13 +778,13 @@
      */
     _.functions = function functions(object) {
         var returnArray = [];
-        for (let key in object) {
+        for (var key in object) {
             if (_.isFunction(object[key])) {
                 returnArray.push(key);
             }
         }
         return returnArray;
-    }
+    };
 
     /**
      * Shallowly copy all of the properties in the source objects over to the destination object, and return the destination object. 
@@ -725,13 +793,18 @@
      * @param {*} destination 
      * @param {*} sources 
      */
-    _.extend = function extend(destination, ...sources) {
-        _.each(sources, element => {
-            for (let key in element)
+    _.extend = function extend(destination) {
+        for (var _len10 = arguments.length, sources = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
+            sources[_key10 - 1] = arguments[_key10];
+        }
+
+        _.each(sources, function (element) {
+            for (var key in element) {
                 destination[key] = element[key];
+            }
         });
         return destination;
-    }
+    };
 
     /**
      * Return a copy of the object, filtered to only have values for the whitelisted keys (or array of valid keys). 
@@ -739,23 +812,27 @@
      * @param {*} object 
      * @param {*} keys 
      */
-    _.pick = function pick(object, ...keys) {
+    _.pick = function pick(object) {
         var returnObject = {};
-        for (let i = 0; i < keys.length; i++) {
+
+        for (var _len11 = arguments.length, keys = Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
+            keys[_key11 - 1] = arguments[_key11];
+        }
+
+        for (var i = 0; i < keys.length; i++) {
             if (_.isString(keys[i])) {
-                for (let key in object)
-                    if (key === keys[i])
-                        returnObject[key] = object[key];
+                for (var key in object) {
+                    if (key === keys[i]) returnObject[key] = object[key];
+                }
             }
             if (_.isFunction(keys[i])) {
-                for (let key in object) {
-                    if (keys[i](object[key], key, object))
-                        returnObject[key] = object[key];
+                for (var _key12 in object) {
+                    if (keys[i](object[_key12], _key12, object)) returnObject[_key12] = object[_key12];
                 }
             }
         }
         return returnObject;
-    }
+    };
 
     /**
      * Return a copy of the object, filtered to omit the blacklisted keys (or array of keys). 
@@ -763,55 +840,62 @@
      * @param {*} object 
      * @param {*} keys 
      */
-    _.omit = function omit(object, ...keys) {
+    _.omit = function omit(object) {
         var returnObject = {};
-        for (let i = 0; i < keys.length; i++) {
+
+        for (var _len12 = arguments.length, keys = Array(_len12 > 1 ? _len12 - 1 : 0), _key13 = 1; _key13 < _len12; _key13++) {
+            keys[_key13 - 1] = arguments[_key13];
+        }
+
+        for (var i = 0; i < keys.length; i++) {
             if (_.isString(keys[i])) {
-                for (let key in object)
-                    if (key !== keys[i])
-                        returnObject[key] = object[key];
+                for (var key in object) {
+                    if (key !== keys[i]) returnObject[key] = object[key];
+                }
             }
             if (_.isFunction(keys[i])) {
-                for (let key in object) {
-                    if (!keys[i](object[key], key, object))
-                        returnObject[key] = object[key];
+                for (var _key14 in object) {
+                    if (!keys[i](object[_key14], _key14, object)) returnObject[_key14] = object[_key14];
                 }
             }
         }
         return returnObject;
-    }
+    };
 
     /**
      * Fill in undefined properties in object with the first value present in the following list of defaults objects.
      * @param {*} object 
      * @param {*} defaults 
      */
-    _.defaults = function defaults(object, ...defaults) {
-        _.each(defaults, function(item) {
+    _.defaults = function defaults(object) {
+        for (var _len13 = arguments.length, defaults = Array(_len13 > 1 ? _len13 - 1 : 0), _key15 = 1; _key15 < _len13; _key15++) {
+            defaults[_key15 - 1] = arguments[_key15];
+        }
+
+        _.each(defaults, function (item) {
             if (_.isObject(item)) {
-                for (let key in item) {
-                    if (object[key] === undefined)
-                        object[key] = item[key];
+                for (var key in item) {
+                    if (object[key] === undefined) object[key] = item[key];
                 }
             }
-        })
+        });
         return object;
-    }
+    };
 
     _.clone = function clone(object) {
-        if (typeof object !== "object") return object;
+        if ((typeof object === 'undefined' ? 'undefined' : _typeof(object)) !== "object") return object;
         return _.isArray(object) ? object.slice() : _.extend({}, object);
-    }
+    };
 
     /**
      * Returns a function that will itself return the key property of any passed-in object.
      * @param {*} key 
      */
     _.property = function property(key) {
-        return function(that) {
+        return function (that) {
             return that[key];
-        }
-    }
+        };
+    };
 
     var deepEq = function deepEq(a, b) {
         var NameOfA = Object.prototype.toString.call(a),
@@ -828,18 +912,40 @@
                 return +a === +b;
             case '[object Array]':
                 if (a.length !== b.length) return false;
-                for (let i = 0; i < a.length; i++) {
+                for (var i = 0; i < a.length; i++) {
                     if (!isEq(a[i], b[i])) return false;
                 }
                 return true;
             default:
-                let keys = Object.getOwnPropertyNames(a);
-                for (let key of keys) {
-                    if (!(key in b) || !isEq(a[key], b[key])) return false;
+                var _keys = Object.getOwnPropertyNames(a);
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = _keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var key = _step2.value;
+
+                        if (!(key in b) || !isEq(a[key], b[key])) return false;
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
                 }
+
                 return true;
         }
-    }
+    };
 
     var isEq = function isEq(a, b) {
         // deal with +0 != -0 case
@@ -848,11 +954,11 @@
         if (a == null || b == null) return false;
         // deal with NaN
         if (a !== a) return b !== b;
-        var type = typeof a;
+        var type = typeof a === 'undefined' ? 'undefined' : _typeof(a);
         // No primitive type. Start compare object types.
-        if (type !== "function" && type !== "object" && typeof b !== "function" && typeof b !== "object") return false;
+        if (type !== "function" && type !== "object" && typeof b !== "function" && (typeof b === 'undefined' ? 'undefined' : _typeof(b)) !== "object") return false;
         return deepEq(a, b);
-    }
+    };
 
     /**
      * Performs an optimized deep comparison between the two objects, 
@@ -862,7 +968,7 @@
      */
     _.isEqual = function isEqual(object, other) {
         return isEq(object, other);
-    }
+    };
 
     /**
      * Tells you if the keys and values in properties are contained in object.
@@ -870,12 +976,11 @@
      * @param {*} properties 
      */
     _.isMatch = function isMatch(object, properties) {
-        for (let key in properties) {
-            if (!_.isEqual(object[key], properties[key]))
-                return false;
+        for (var key in properties) {
+            if (!_.isEqual(object[key], properties[key])) return false;
         }
         return true;
-    }
+    };
 
     /**
      * Returns true if an enumerable object contains no values (no enumerable own-properties). 
@@ -883,12 +988,9 @@
      * @param {*} object 
      */
     _.isEmpty = function isEmpty(object) {
-        if (typeof object !== "object") return true;
-        if (object.length !== undefined)
-            return object.length === 0;
-        else
-            return Object.keys(object).length === 0;
-    }
+        if ((typeof object === 'undefined' ? 'undefined' : _typeof(object)) !== "object") return true;
+        if (object.length !== undefined) return object.length === 0;else return Object.keys(object).length === 0;
+    };
 
     /**
      * Returns true if object is an Array.
@@ -896,7 +998,7 @@
      */
     _.isArray = function isArray(object) {
         return Array.isArray(object) || object instanceof Array;
-    }
+    };
 
     /**
      * Returns true if object is a Function.
@@ -904,7 +1006,7 @@
      */
     _.isFunction = function isFunction(object) {
         return typeof object === "function";
-    }
+    };
 
     /**
      * Returns true if value is an Object. 
@@ -913,8 +1015,8 @@
      * @param {*} value 
      */
     _.isObject = function isObject(value) {
-        return typeof value === "object" && !_.isArray(value) && !_.isFunction(value);
-    }
+        return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object" && !_.isArray(value) && !_.isFunction(value);
+    };
 
     /**
      * Returns true if object is a String.
@@ -922,7 +1024,7 @@
      */
     _.isString = function isString(object) {
         return typeof object === "string";
-    }
+    };
 
     /**
      * Returns true if object is a Number (including NaN).
@@ -930,7 +1032,7 @@
      */
     _.isNumber = function isNumber(object) {
         return typeof object === "number";
-    }
+    };
 
     /**
      * Returns true if object is either true or false.
@@ -938,7 +1040,7 @@
      */
     _.isBoolean = function isBoolean(object) {
         return typeof object === "boolean";
-    }
+    };
 
     /**
      * Returns true if object is a Date.
@@ -946,7 +1048,7 @@
      */
     _.isDate = function isDate(object) {
         return Object.prototype.toString.call(object) === "[object Date]";
-    }
+    };
 
     /**
      * Returns true if object is a RegExp.
@@ -954,7 +1056,7 @@
      */
     _.isRegExp = function isRegExp(object) {
         return Object.prototype.toString.call(object) === "[object RegExp]";
-    }
+    };
 
     /**
      * Returns true if object inherits from an Error.
@@ -962,7 +1064,7 @@
      */
     _.isError = function isError(object) {
         return Object.prototype.toString.call(object) === "[object Error]";
-    }
+    };
 
     /**
      * Returns true if object is NaN.
@@ -970,7 +1072,7 @@
      */
     _.isNaN = function isNaN(object) {
         return object !== object;
-    }
+    };
 
     /**
      * Returns true if the value of object is null.
@@ -978,7 +1080,7 @@
      */
     _.isNull = function isNull(object) {
         return object === null;
-    }
+    };
 
     /**
      * Returns true if value is undefined.
@@ -986,7 +1088,7 @@
      */
     _.isUndefine = function isUndefine(value) {
         return arguments.length === 1 && value === undefined;
-    }
+    };
 
     /**
      * Returns true if object is a finite Number.
@@ -994,17 +1096,17 @@
      */
     _.isFinite = function isFinite(object) {
         return _.isNumber(object) && object !== Infinity && object !== -Infinity;
-    }
+    };
 
     /**
      * Creates a function that returns the same value that is used as the argument of _.constant.
      * @param {*} value 
      */
     _.constant = function constant(value) {
-        return function() {
+        return function () {
             return value;
-        }
-    }
+        };
+    };
 
     /**
      * Returns a random integer between min and max, inclusive. 
@@ -1018,7 +1120,16 @@
             min = 0;
         }
         return min + Math.floor(Math.random() * (max - min + 1));
-    }
+    };
+
+    /**
+     * Returns a wrapped object. Calling methods on this object will continue to return wrapped objects until value is called.
+     */
+    _.chain = function (obj) {
+        var instance = _(obj);
+        instance._chain = true;
+        return instance;
+    };
 
     /**
      * If the value of the named property is a function then invoke it with the object as context; otherwise, return it. 
@@ -1032,14 +1143,34 @@
         if (object[property] === undefined) {
             if (typeof defaultValue === "function") {
                 return defaultValue(object);
-            } else
-                return defaultValue;
+            } else return defaultValue;
         } else {
-            if (typeof object[property] === "function")
-                return object[property](object);
-            else
-                return object[property];
+            if (typeof object[property] === "function") return object[property](object);else return object[property];
         }
-    }
+    };
 
-}());
+    /**
+     * Allows you to extend Underscore with your own utility functions. 
+     * Pass a hash of {name: function} definitions to have your functions added to the Underscore object, as well as the OOP wrapper.
+     */
+    _.mixin = function mixin(obj) {
+        _.each(_.functions(obj), function (name) {
+            var func = _[name] = obj[name];
+            _.prototype[name] = function () {
+                var args = [this._wrapped];
+                args.push.apply(args, arguments);
+                return this._chain ? _(func.apply(this, args)).chain() : func.apply(this, args);
+            };
+        });
+        return _;
+    };
+
+    _.mixin(_);
+
+    /**
+     * Extracts the value of a wrapped object.
+     */
+    _.prototype.value = function () {
+        return this._wrapped;
+    };
+})();
