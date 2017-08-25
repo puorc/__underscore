@@ -1,5 +1,5 @@
 # __underscore 
-![build](https://api.travis-ci.org/puorc/__underscore.svg?branch=master)
+[![Build Status](https://travis-ci.org/puorc/__underscore.svg?branch=master)](https://travis-ci.org/puorc/__underscore)
 
 Underscore is a JavaScript library that provides a whole mess of useful functional programming helpers without extending any built-in objects. 
 
